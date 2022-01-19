@@ -37,7 +37,7 @@ public class ORM {
     //Singleton.
     private static ORM singletonORM;
     //Nom du fichier de configuration.
-    public static String CONFIGURATION_FILENAME = "./configuration/database_configuration.properties";
+    public static String CONFIGURATION_FILENAME = "./configuration/database.properties";
 
     private ORM() {
         chargerConfiguration();
