@@ -7,21 +7,19 @@ import java.util.Objects;
 
 /**
  * Superlasse abstraite des entités.
- *
- * @author CHEVRIER, HADJ MESSAOUD, LOUGADI
  */
 public abstract class Entity {
-    //Attributs de l'entité.
-    protected Map<String, Object> attributs;
+    //attributes de l'entité.
+    protected Map<String, Object> attributes;
 
     /**
      * Créer un nouvel n-uplet sur l'application.
      */
     public Entity() {
-        Map<String, Class> structure = EntityMetadata.getEntiteStructure(getClass());
-        attributs = new HashMap<String, Object>();
-        for(String attribut : structure.keySet()) {
-            set(attribut, null);
+        Map<String, Class> structure = EntityMetadata.getStructureEntity(getClass());
+        attributes = new HashMap<String, Object>();
+        for(String attribute : structure.keySet()) {
+            set(attribute, null);
         }
     }
 
@@ -31,43 +29,43 @@ public abstract class Entity {
      *
      * (Constructeur utilisé par l'ORM).
      */
-    public Entity(@NotNull Map<String, Object> attributs) {
-        this.attributs = attributs;
+    public Entity(@NotNull Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 
     /**
      * Savoir si le n-uplet a renseigné un attribut.
      */
-    public boolean renseigne(@NotNull String attribut) {
-        return attributs.containsKey(attribut);
+    public boolean has(@NotNull String attribute) {
+        return attributes.containsKey(attribute);
     }
 
     /**
      * Obtenir un attribut.
      *
-     * @param attribut
+     * @param attribute
      * @return
      */
-    public Object get(@NotNull String attribut) {
-        if(!renseigne(attribut)) {
-            throw new IllegalArgumentException("L'attribut " + attribut + " est introuvale !");
+    public Object get(@NotNull String attribute) {
+        if(!has(attribute)) {
+            throw new IllegalArgumentException("L'attribute " + attribute + " est introuvale !");
         }
-        return attributs.get(attribut);
+        return attributes.get(attribute);
     }
 
     /**
      * Modifier / ajouter un attribut.
      *
-     * @param attribut
-     * @param valeur
+     * @param attribute
+     * @param value
      * @return
      */
-    public Object set(@NotNull String attribut, Object valeur) {
-        return attributs.put(attribut, valeur);
+    public Object set(@NotNull String attribute, Object value) {
+        return attributes.put(attribute, value);
     }
 
     /**
-     * Obtenir l'attribut ID.
+     * Obtenir l'attribute ID.
      *
      * @return
      */
@@ -79,23 +77,23 @@ public abstract class Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Entity entite = (Entity) o;
-        return getId().equals(entite.getId());
+        Entity entity = (Entity) o;
+        return getId().equals(entity.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(attributs);
+        return Objects.hash(attributes);
     }
 
     @Override
     public String toString() {
-        String contenu = getClass().getSimpleName() + " [ ";
-        for(String attribut : attributs.keySet()) {
-            Object valeur = attributs.get(attribut);
-            contenu +=  attribut.toLowerCase() + " = " + valeur + ", ";
+        String content = getClass().getSimpleName() + " [ ";
+        for(String attribute : attributes.keySet()) {
+            Object value = attributes.get(attribute);
+            content +=  attribute.toLowerCase() + " = " + value + ", ";
         }
-        contenu = contenu.substring(0, contenu.length() - 2) + " ]";
-        return contenu;
+        content = content.substring(0, content.length() - 2) + " ]";
+        return content;
     }
 }

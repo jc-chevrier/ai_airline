@@ -9,29 +9,26 @@ import java.util.*;
  * Cette classe sert à récupérer / extraire les
  * métadonnées des entités : nom de table, structure
  * de tables : leurs attributs.
- *
- *
- * @author CHEVRIER, HADJ MESSAOUD, LOUGADI
  */
 public class EntityMetadata {
     /**
      * Récupérer le nom de la table de la base de
      * données correspondant à une classe entité.
      *
-     * @param entiteClasse
+     * @param classEntity
      * @return
      */
-    public static String getEntiteNomTable(@NotNull Class entiteClasse) {
-        String entiteNomTable = null;
+    public static String getTableNameEntity(@NotNull Class classEntity) {
+        String tableNameEntity = null;
         try {
-            entiteNomTable = (String) entiteClasse.getDeclaredField("NOM_TABLE").get(String.class);
+            tableNameEntity = (String) classEntity.getDeclaredField("NAME_TABLE").get(String.class);
         } catch (Exception e) {
             System.err.println("Erreur ! La récupération du nom de table d'une entité a echoué, entité : \"" +
-                               entiteClasse.getSimpleName() + "\" !");
+                               classEntity.getSimpleName() + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
-        return entiteNomTable;
+        return tableNameEntity;
     }
 
     /**
@@ -39,39 +36,39 @@ public class EntityMetadata {
      * les métadonnées des attributs de la table qui lui
      * est associé : les noms et les types des attributs.
      *
-     * @param entiteClasse
+     * @param classEntity
      * @return
      */
-    public static Map<String, Class> getEntiteStructure(@NotNull Class entiteClasse) {
-        Map<String, Class> entiteStructure = null;
+    public static Map<String, Class> getStructureEntity(@NotNull Class classEntity) {
+        Map<String, Class> strutureEntity = null;
         try {
-            entiteStructure = (Map<String, Class>) entiteClasse.getDeclaredField("STRUCTURE").get(Map.class);
+            strutureEntity = (Map<String, Class>) classEntity.getDeclaredField("STRUCTURE").get(Map.class);
         } catch (Exception e) {
             System.err.println("Erreur ! La récupération de la structure d'une entité a echoué, entité : \"" +
-                               entiteClasse.getSimpleName() + "\" !");
+                               classEntity.getSimpleName() + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
-        return entiteStructure;
+        return strutureEntity;
     }
 
     /**
      * Créer un nouvel n-uplet d'une entité.
      *
-     * @param entiteClasse
+     * @param classEntity
      * @return
      */
-    public static Entity instancierNUplet(@NotNull Class entiteClasse,
-                                          @NotNull Map<String, Object> nUpletAttributs) {
-        Entity nUplet = null;
+    public static Entity instanceEntity(@NotNull Class classEntity,
+                                        @NotNull Map<String, Object> attributesEntity) {
+        Entity entity = null;
         try {
-            nUplet = (Entity) entiteClasse.getDeclaredConstructor(Map.class).newInstance(nUpletAttributs);
+            entity = (Entity) classEntity.getDeclaredConstructor(Map.class).newInstance(attributesEntity);
         } catch (Exception e) {
             System.err.println("Erreur ! Une instanciation d'un n-uplet à partir de métadonnées a échoué, entité : \"" +
-                               entiteClasse.getSimpleName() + "\", n-uplet : \""+ nUpletAttributs +"\" !");
+                               classEntity.getSimpleName() + "\", n-uplet : \""+ attributesEntity +"\" !");
             e.printStackTrace();
             System.exit(1);
         }
-        return nUplet;
+        return entity;
     }
 }

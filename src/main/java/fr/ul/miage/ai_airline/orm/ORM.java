@@ -26,22 +26,20 @@ import java.util.stream.Collectors;
  * La classe citée ci-dessous est la classe outil nous
  * permettant d'extraire les métadonnées des entités :
  * @see EntityMetadata
- *
- * @author CHEVRIER, HADJ MESSAOUD, LOUGADI
  */
 public class ORM {
     //Configuration de la connexion à la base de données.
     private Properties configuration;
     //Connexion à la base de données.
-    private Connection connexion;
+    private Connection connection;
     //Singleton.
     private static ORM singletonORM;
     //Nom du fichier de configuration.
     public static String CONFIGURATION_FILENAME = "./configuration/database.properties";
 
     private ORM() {
-        chargerConfiguration();
-        connecter();
+        loadConfiguration();
+        connect();
     }
 
     /**
@@ -60,7 +58,7 @@ public class ORM {
      * Charger la configuration de la connexion
      * à la base de données.
      */
-    private void chargerConfiguration() {
+    private void loadConfiguration() {
         configuration = new Properties();
         try {
             configuration.load(Main.class.getResourceAsStream(CONFIGURATION_FILENAME));
@@ -74,14 +72,14 @@ public class ORM {
     /**
      * Connecter l'application à la base de données.
      */
-    private void connecter() {
+    private void connect() {
         try {
             Class.forName("org.postgresql.Driver");
-            connexion = DriverManager.getConnection("jdbc:postgresql://" +
-                                                    configuration.get("hote") + ":" + configuration.get("port") + "/" +
-                                                    configuration.get("baseDeDonnees"),
-                                                    (String) configuration.get("utilisateur"), (String) configuration.get("motDePasse"));
-            connexion.setAutoCommit(false);
+            connection = DriverManager.getConnection("jdbc:postgresql://" +
+                                                    configuration.get("host") + ":" + configuration.get("port") + "/" +
+                                                    configuration.get("database"),
+                                                    (String) configuration.get("user"), (String) configuration.get("password"));
+            connection.setAutoCommit(false);
         } catch (Exception e) {
             System.err.println("Erreur ! Connexion impossible à la base de données !");
             e.printStackTrace();
@@ -111,46 +109,46 @@ public class ORM {
      * Si aucun n-uplet n'est trouvé, la méthode retourne une
      * liste vide.
      *
-     * @param requeteString
+     * @param requestString
      * @return
      */
-    public List<Map<String, Object>> chercherNUplets(@NotNull String requeteString) {
-        List<Map<String, Object>> nUplets = new ArrayList<Map<String, Object>>();
+    public List<Map<String, Object>> findNative(@NotNull String requestString) {
+        List<Map<String, Object>> entitys = new ArrayList<Map<String, Object>>();
 
         try {
             //Exécution de la requête.
-            Statement requete = connexion.createStatement();
-            ResultSet resultatNUplets = requete.executeQuery(requeteString);
+            Statement request = connection.createStatement();
+            ResultSet resultEntitys = request.executeQuery(requestString);
 
-            //Récupération des libellés des attributs du résultat.
-            ResultSetMetaData resultatMetadonnees = resultatNUplets.getMetaData();
-            List<String> attributs = new ArrayList<String>();
-            int nombreAttributs = resultatMetadonnees.getColumnCount();
-            for(int indexAttribut = 1; indexAttribut <= nombreAttributs; indexAttribut++) {
-                attributs.add(resultatMetadonnees.getColumnName(indexAttribut).toUpperCase());
+            //Récupération des libellés des attributes du résultat.
+            ResultSetMetaData resultMetadatas = resultEntitys.getMetaData();
+            List<String> attributes = new ArrayList<String>();
+            int countAttributes = resultMetadatas.getColumnCount();
+            for(int indexAttribute = 1; indexAttribute <= countAttributes; indexAttribute++) {
+                attributes.add(resultMetadatas.getColumnName(indexAttribute).toUpperCase());
             }
 
             //Lecture du résultat de la requête.
-            while(resultatNUplets.next()) {
-                Map<String, Object> nUplet = new HashMap<String, Object>();
-                nUplets.add(nUplet);
-                for(String attribut : attributs) {
-                    Object valeur = resultatNUplets.getObject(attribut);
-                    nUplet.put(attribut, valeur);
+            while(resultEntitys.next()) {
+                Map<String, Object> entity = new HashMap<String, Object>();
+                entitys.add(entity);
+                for(String attribute : attributes) {
+                    Object value = resultEntitys.getObject(attribute);
+                    entity.put(attribute, value);
                 }
             }
 
             //Fin de la lecture du résultat de la requête.
-            resultatNUplets.close();
+            resultEntitys.close();
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête se sélection a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête se sélection a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
 
-        return nUplets;
+        return entitys;
     }
 
     /**
@@ -174,67 +172,67 @@ public class ORM {
      * Si aucun n-uplet n'est trouvé, la méthode retourne une
      * liste vide.
      *
-     * @param predicat
-     * @param entiteClasse
+     * @param predicate
+     * @param classEntity
      * @return
      */
-    public List<Entity> chercherNUpletsAvecPredicat(@NotNull String predicat, @NotNull Class entiteClasse) {
+    public List<Entity> findWhere(@NotNull String predicate, @NotNull Class classEntity) {
         //Récupération des métadonnées de la table.
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
-        Map<String, Class> structure = new TreeMap<String, Class>(EntityMetadata.getEntiteStructure(entiteClasse));
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
+        Map<String, Class> structure = new TreeMap<String, Class>(EntityMetadata.getStructureEntity(classEntity));
 
         //Construction de la requête.
-        String requeteString = "SELECT " +
+        String requestString = "SELECT " +
                                 structure.keySet()
                                         .stream()
                                         .collect(Collectors.joining(", FROM_TABLE.", "FROM_TABLE.", "")) +
-                                " FROM " + nomTable + " AS FROM_TABLE " + predicat + "" +
+                                " FROM " + tableName + " AS FROM_TABLE " + predicate + "" +
                                 " ORDER BY FROM_TABLE.ID;";
 
-        List<Entity> nUplets = new ArrayList<Entity>();
+        List<Entity> entitys = new ArrayList<Entity>();
         try {
             //Exécution de la requête.
-            Statement requete = connexion.createStatement();
-            ResultSet resultatNUplets = requete.executeQuery(requeteString);
+            Statement request = connection.createStatement();
+            ResultSet resultEntitys = request.executeQuery(requestString);
 
             //Lecture des lignes du résultat de la requête.
-            while(resultatNUplets.next()) {
-                Map<String, Object> nUpletAttributs = new HashMap<String, Object>();
-                for(String attribut : structure.keySet()) {
-                    Object valeur = null;
-                    Class type = structure.get(attribut);
+            while(resultEntitys.next()) {
+                Map<String, Object> entityAttributes = new HashMap<String, Object>();
+                for(String attribute : structure.keySet()) {
+                    Object value = null;
+                    Class type = structure.get(attribute);
                     if (type.equals(Integer.class)) {
-                        valeur = resultatNUplets.getInt(attribut);
-                        if(resultatNUplets.wasNull()) {
-                            valeur = null;
+                        value = resultEntitys.getInt(attribute);
+                        if(resultEntitys.wasNull()) {
+                            value = null;
                         }
                     } else if (type.equals(Double.class)) {
-                        valeur = resultatNUplets.getDouble(attribut);
-                        if(resultatNUplets.wasNull()) {
-                            valeur = null;
+                        value = resultEntitys.getDouble(attribute);
+                        if(resultEntitys.wasNull()) {
+                            value = null;
                         }
                     } else if (type.equals(String.class)) {
-                        valeur = resultatNUplets.getString(attribut);
+                        value = resultEntitys.getString(attribute);
                     } else if (type.equals(Date.class)) {
-                        valeur = resultatNUplets.getTimestamp(attribut);
+                        value = resultEntitys.getTimestamp(attribute);
                     }
-                    nUpletAttributs.put(attribut, valeur);
+                    entityAttributes.put(attribute, value);
                 }
-                Entity nUplet = EntityMetadata.instancierNUplet(entiteClasse, nUpletAttributs);
-                nUplets.add(nUplet);
+                Entity entity = EntityMetadata.instanceEntity(classEntity, entityAttributes);
+                entitys.add(entity);
             }
 
             //Fin de la lecture du résultat de la requête.
-            resultatNUplets.close();
+            resultEntitys.close();
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête de sélection a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête de sélection a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
 
-        return nUplets;
+        return entitys;
     }
 
     /**
@@ -242,17 +240,34 @@ public class ORM {
      *
      * Cette méthode retourne le premier n-uplet trouvé par cette
      * autre méthode :
-     * @see fr.ul.miage.ai_airline.orm.ORM#chercherNUpletsAvecPredicat(String, Class) 
+     * @see fr.ul.miage.ai_airline.orm.ORM#findWhere(String, Class)
      *
      * Si aucun n-uplet n'est trouvé, la méthode retourne null.
      *
-     * @param predicat
-     * @param entiteClasse
+     * @param predicate
+     * @param classEntity
      * @return
      */
-    public Entity chercherNUpletAvecPredicat(@NotNull String predicat, @NotNull Class entiteClasse) {
-        List<Entity> nUplets = chercherNUpletsAvecPredicat(predicat, entiteClasse);
-        return nUplets.size() == 0 ? null : nUplets.get(0);
+    public Entity findOneWhere(@NotNull String predicate, @NotNull Class classEntity) {
+        List<Entity> entitys = findWhere(predicate, classEntity);
+        return entitys.size() == 0 ? null : entitys.get(0);
+    }
+
+    /**
+     * Chercher un unique n-uplet d'une table avec son id.
+     *
+     * Cette méthode retourne le premier n-uplet trouvé par cette
+     * autre méthode :
+     * @see fr.ul.miage.ai_airline.orm.ORM#findOneWhere(String, Class)
+     *
+     * Si aucun n-uplet n'est trouvé, la méthode retourne null.
+     *
+     * @param id
+     * @param classEntity
+     * @return
+     */
+    public Entity findOne(@NotNull Integer id, @NotNull Class classEntity) {
+        return findOneWhere("WHERE ID = " + id, classEntity);
     }
 
     /**
@@ -260,48 +275,48 @@ public class ORM {
      *
      * Cette méthode utilise cette autre méthode, sans prédicat /
      * condition :
-     * @see fr.ul.miage.ai_airline.orm.ORM#chercherNUpletAvecPredicat(String, Class)
+     * @see fr.ul.miage.ai_airline.orm.ORM#findWhere(String, Class)
      *
      * Si la table est vide, la méthode retourne une liste vide.
      */
-    public List<Entity> chercherTousLesNUplets(@NotNull Class entiteClasse) {
-        return chercherNUpletsAvecPredicat("", entiteClasse);
+    public List<Entity> findAll(@NotNull Class classEntity) {
+        return findWhere("", classEntity);
     }
 
     /**
-     * Compter le nombre de n-uplets d'une table en précisant
+     * Compter le count de n-uplets d'une table en précisant
      * un prédicat / une condition.
      *
-     * @see fr.ul.miage.ai_airline.orm.ORM#chercherNUplets(String)
+     * @see fr.ul.miage.ai_airline.orm.ORM#findNative(String)
      *
-     * @param predicat
-     * @param entiteClasse
+     * @param predicate
+     * @param classEntity
      * @return
      */
-    public Integer compterNUpletsAvecPredicat(@NotNull String predicat, @NotNull Class entiteClasse) {
+    public Integer countWhere(@NotNull String predicate, @NotNull Class classEntity) {
         //Récupération des métadonnées de la table.
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
 
         //Construction de la requête.
-        String requeteString = "SELECT COUNT(FROM_TABLE.*) AS NOMBRE_NUPLETS FROM " + nomTable + " AS FROM_TABLE " + predicat + ";";
+        String requestString = "SELECT COUNT(FROM_TABLE.*) AS COUNT_ENTITYS FROM " + tableName + " AS FROM_TABLE " + predicate + ";";
 
         //Exécution de la requête.
-        Integer nombreNUplets = ((Long) chercherNUplets(requeteString).get(0).get("NOMBRE_NUPLETS")).intValue();
+        Integer countEntitys = ((Long) findNative(requestString).get(0).get("COUNT_ENTITYS")).intValue();
 
-        return nombreNUplets;
+        return countEntitys;
     }
 
     /**
-     * Compter le nombre total de n-uplets d'une table.
+     * Compter le count total de n-uplets d'une table.
      *
      * Cette méthode utilise cette autre méthode, sans prédicat :
-     * @see fr.ul.miage.ai_airline.orm.ORM#compterNUpletsAvecPredicat(String, Class) 
+     * @see fr.ul.miage.ai_airline.orm.ORM#countWhere(String, Class)
      *
-     * @param entiteClasse
+     * @param classEntity
      * @return
      */
-    public Integer compterTousLesNUplets(@NotNull Class entiteClasse) {
-        return compterNUpletsAvecPredicat("", entiteClasse);
+    public Integer countAll(@NotNull Class classEntity) {
+        return countWhere("", classEntity);
     }
 
     /**
@@ -309,71 +324,71 @@ public class ORM {
      *
      * Faire persister <=> insérer ou mettre à jour.
      * 
-     * @see fr.ul.miage.ai_airline.orm.ORM#insererNUplet(Entity)
-     * @see fr.ul.miage.ai_airline.orm.ORM#mettreAJourNUplet(Entity)
+     * @see fr.ul.miage.ai_airline.orm.ORM#add(Entity)
+     * @see fr.ul.miage.ai_airline.orm.ORM#update(Entity)
      */
-    public void persisterNUplet(@NotNull Entity nUplet) {
+    public void save(@NotNull Entity entity) {
         //Mode : insertion ou mise à jour ?
-        boolean modeInsertion = nUplet.getId() == null;
+        boolean modeInsertion = entity.getId() == null;
         //Cas insertion.
         if(modeInsertion) {
-            insererNUplet(nUplet);
+            add(entity);
         //Cas mise à jour.
         } else {
-            mettreAJourNUplet(nUplet);
+            update(entity);
         }
     }
 
     /**
      * Insérer un n-uplet, en précisant le n-uplet.
      */
-    public void insererNUplet(@NotNull Entity nUplet) {
+    public void add(@NotNull Entity entity) {
         //Récupération des métadonnées de la table.
-        Class entiteClasse = nUplet.getClass();
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
-        Map<String, Class> structure = EntityMetadata.getEntiteStructure(entiteClasse);
+        Class classEntity = entity.getClass();
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
+        Map<String, Class> structure = EntityMetadata.getStructureEntity(classEntity);
 
         //Construction de la requête.
-        String requeteString = "INSERT INTO " + nomTable + "(";
+        String requestString = "INSERT INTO " + tableName + "(";
         //Colonnes.
-        for(String attribut : structure.keySet()) {
-            if(!attribut.equals("ID")) {
-                requeteString += attribut + ",";
+        for(String attribute : structure.keySet()) {
+            if(!attribute.equals("ID")) {
+                requestString += attribute + ",";
             }
         }
-        requeteString = requeteString.substring(0, requeteString.length() - 1) + ") VALUES (" ;
-        //Valeurs.
-        for(String attribut : structure.keySet()) {
-            if(!attribut.equals("ID")) {
-                Object valeur = nUplet.get(attribut);
-                if(valeur == null) {
-                    requeteString += "NULL,";
+        requestString = requestString.substring(0, requestString.length() - 1) + ") VALUES (" ;
+        //Values.
+        for(String attribute : structure.keySet()) {
+            if(!attribute.equals("ID")) {
+                Object value = entity.get(attribute);
+                if(value == null) {
+                    requestString += "NULL,";
                 } else {
-                    requeteString += "'" + valeur + "',";
+                    requestString += "'" + value + "',";
                 }
             }
         }
-        requeteString = requeteString.substring(0, requeteString.length() - 1) + ");";
+        requestString = requestString.substring(0, requestString.length() - 1) + ");";
 
         try {
             //Execution de la requête.
-            PreparedStatement requete = connexion.prepareStatement(requeteString, Statement.RETURN_GENERATED_KEYS);
-            requete.executeUpdate();
+            PreparedStatement request = connection.prepareStatement(requestString, Statement.RETURN_GENERATED_KEYS);
+            request.executeUpdate();
 
             //Validation de la transaction.
-            connexion.commit();
+            connection.commit();
 
             //On récupère l'id généré pour le nouvel n-uplet.
-            ResultSet clesGenerees = requete.getGeneratedKeys();
-            clesGenerees.next();
-            nUplet.set("ID", clesGenerees.getInt("ID"));
+            ResultSet generatedKeys = request.getGeneratedKeys();
+            generatedKeys.next();
+            entity.set("ID", generatedKeys.getInt("ID"));
 
             //Fin de la lecture des clés générées.
-            clesGenerees.close();
+            generatedKeys.close();
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête d'insertion a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête d'insertion a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
@@ -382,39 +397,39 @@ public class ORM {
     /**
      * Mettre à jour un n-uplet, en précisant le n-uplet.
      */
-    public void mettreAJourNUplet(@NotNull Entity nUplet) {
+    public void update(@NotNull Entity entity) {
         //Récupération des métadonnées de la table.
-        Class entiteClasse = nUplet.getClass();
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
-        Map<String, Class> structure = EntityMetadata.getEntiteStructure(entiteClasse);
+        Class classEntity = entity.getClass();
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
+        Map<String, Class> structure = EntityMetadata.getStructureEntity(classEntity);
 
         //Construction de la requête.
-        String requeteString = "UPDATE " + nomTable + " SET ";
-        //Nouvelles valeurs.
-        for(String attribut : structure.keySet()) {
-            if(!attribut.equals("ID")) {
-                Object valeur = nUplet.get(attribut);
-                if(valeur == null) {
-                    requeteString += attribut + " = NULL,";
+        String requestString = "UPDATE " + tableName + " SET ";
+        //Nouvelles values.
+        for(String attribute : structure.keySet()) {
+            if(!attribute.equals("ID")) {
+                Object value = entity.get(attribute);
+                if(value == null) {
+                    requestString += attribute + " = NULL,";
                 } else {
-                    requeteString += attribut + " = '" + valeur + "',";
+                    requestString += attribute + " = '" + value + "',";
                 }
             }
         }
-        requeteString = requeteString.substring(0, requeteString.length() - 1) + " WHERE ID = " + nUplet.getId() + ";";
+        requestString = requestString.substring(0, requestString.length() - 1) + " WHERE ID = " + entity.getId() + ";";
 
         try {
             //Execution de la requête.
-            Statement requete = connexion.createStatement();
-            requete.executeUpdate(requeteString);
+            Statement request = connection.createStatement();
+            request.executeUpdate(requestString);
 
             //Validation de la transaction.
-            connexion.commit();
+            connection.commit();
 
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête de mise à jour a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête de mise à jour a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
@@ -424,28 +439,28 @@ public class ORM {
      * Supprimer des n-uplets d'une table en précisant
      * un prédicat / une condition.
      *
-     * @param predicat
-     * @param entiteClasse
+     * @param predicate
+     * @param classEntity
      */
-    public void supprimerNUpletsAvecPredicat(@NotNull String predicat, @NotNull Class entiteClasse) {
+    public void removeWhere(@NotNull String predicate, @NotNull Class classEntity) {
         //Récupération des métadonnées de la table.
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
 
         //Construction de la requête.
-        String requeteString = "DELETE FROM " + nomTable + " " + predicat + " ;";
+        String requestString = "DELETE FROM " + tableName + " " + predicate + " ;";
 
         try {
             //Exécution de la requête.
-            Statement requete = connexion.createStatement();
-            requete.executeUpdate(requeteString);
+            Statement request = connection.createStatement();
+            request.executeUpdate(requestString);
 
             //Validation de la transaction.
-            connexion.commit();
+            connection.commit();
 
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête de suppression a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête de suppression a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
@@ -454,12 +469,12 @@ public class ORM {
     /**
      * Supprimer un unique n-uplet, en précisant le n-uplet.
      *
-     * @see fr.ul.miage.ai_airline.orm.ORM#supprimerNUpletsAvecPredicat(String, Class) 
+     * @see fr.ul.miage.ai_airline.orm.ORM#removeWhere(String, Class)
      * 
-     * @param nUplet
+     * @param entity
      */
-    public void supprimerNUplet(@NotNull Entity nUplet) {
-        supprimerNUpletsAvecPredicat("WHERE ID = " + nUplet.getId(), nUplet.getClass());
+    public void removeOne(@NotNull Entity entity) {
+        removeWhere("WHERE ID = " + entity.getId(), entity.getClass());
     }
 
     /**
@@ -467,67 +482,67 @@ public class ORM {
      *
      * Cette méthode utilise cette autre méthode, sans prédicat /
      * condition :
-     *  @see fr.ul.miage.ai_airline.orm.ORM#supprimerNUpletsAvecPredicat(String, Class)
+     *  @see fr.ul.miage.ai_airline.orm.ORM#removeWhere(String, Class)
      *
-     * @param entiteClasse
+     * @param classEntity
      */
-    public void supprimerTousLesNUplets(@NotNull Class entiteClasse) {
-        supprimerNUpletsAvecPredicat("", entiteClasse);
+    public void removeAll(@NotNull Class classEntity) {
+        removeWhere("", classEntity);
     }
 
     /**
-     * Réinitialiser une séquence d'id d'une table à une valeur
+     * Réinitialiser une séquence d'id d'une table à une value
      * de départ.
      *
-     * @param entiteClasse
+     * @param classEntity
      */
-    public void reinitialiserSequenceId(int idDebut, @NotNull Class entiteClasse) {
+    public void resetSequenceId(int idDebut, @NotNull Class classEntity) {
         //Récupération des métadonnées de la table.
-        String nomTable = EntityMetadata.getEntiteNomTable(entiteClasse);
+        String tableName = EntityMetadata.getTableNameEntity(classEntity);
 
         //Contruction de la requête.
-        String requeteString = "ALTER SEQUENCE " + nomTable.toLowerCase() + "_id_seq RESTART WITH " + idDebut + ";";
+        String requestString = "ALTER SEQUENCE " + tableName.toLowerCase() + "_id_seq RESTART WITH " + idDebut + ";";
 
         try {
             //Exécution de la requête.
-            Statement requete = connexion.createStatement();
-            requete.executeUpdate(requeteString);
+            Statement request = connection.createStatement();
+            request.executeUpdate(requestString);
 
             //Validation de la transaction.
-            connexion.commit();
+            connection.commit();
 
             //Fin de la requête.
-            requete.close();
+            request.close();
         } catch (Exception e) {
-            System.err.println("Erreur ! Une requête de réinitialisation de séquence d'id a échouée : \"" + requeteString + "\" !");
+            System.err.println("Erreur ! Une requête de réinitialisation de séquence d'id a échouée : \"" + requestString + "\" !");
             e.printStackTrace();
             System.exit(1);
         }
     }
 
     /**
-     * Réinitialiser une séquence d'id d'une table à une valeur
+     * Réinitialiser une séquence d'id d'une table à une value
      * de départ de 1.
      *
-     * @see fr.ul.miage.ai_airline.orm.ORM#reinitialiserSequenceId(int, Class) 
+     * @see fr.ul.miage.ai_airline.orm.ORM#resetSequenceId(int, Class)
      * 
-     * @param entiteClasse
+     * @param classEntity
      */
-    public void reinitialiserSequenceIdA1(@NotNull Class entiteClasse) {
-        reinitialiserSequenceId(1, entiteClasse);
+    public void resetSequenceIdAt1(@NotNull Class classEntity) {
+        resetSequenceId(1, classEntity);
     }
 
     /**
      * Supprimer tous les n-uplets d'une table, et réinitialiser
      * la séquence de ses ids à 1.
      *
-     * @see fr.ul.miage.ai_airline.orm.ORM#supprimerTousLesNUplets(Class)
-     * @see fr.ul.miage.ai_airline.orm.ORM#reinitialiserSequenceIdA1(Class) 
+     * @see fr.ul.miage.ai_airline.orm.ORM#removeAll(Class)
+     * @see fr.ul.miage.ai_airline.orm.ORM#resetSequenceIdAt1(Class)
      * 
-     * @param entiteClasse
+     * @param classEntity
      */
-    public void reinitialiserTable(@NotNull Class entiteClasse) {
-        supprimerTousLesNUplets(entiteClasse);
-        reinitialiserSequenceIdA1(entiteClasse);
+    public void reset(@NotNull Class classEntity) {
+        removeAll(classEntity);
+        resetSequenceIdAt1(classEntity);
     }
 }
