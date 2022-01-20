@@ -7,6 +7,9 @@ package fr.ul.miage.ai_airline.agent;
         import org.json.JSONException;
         import org.json.JSONObject;
 
+        import java.time.LocalDateTime;
+        import java.time.format.DateTimeFormatter;
+
 public class ConsultationAgent extends Agent {
     @Override
     protected void setup() {
@@ -27,13 +30,19 @@ public class ConsultationAgent extends Agent {
                     try {
                         JSONObject json = new JSONObject(msg.getContent());
                         String idResquest = json.getString("idRequete");
+                        System.err.println("LECTURE");
                         System.out.println(idResquest);
+                        String takeoffDate = json.getString("dateDepart");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                        LocalDateTime dateTime = LocalDateTime.parse(takeoffDate, formatter);
+                        // string : dateTime.format(formatter)  == 2022-01-28 11:30
+                        // datetime == 2022-01-28T11:30
+
                     } catch (JSONException e) {
                         System.err.println("AGENT LISTEN CONSULTATION CRASH");
                         System.out.println(msg.getContent());
                         e.printStackTrace();
                     }
-
 
                     ACLMessage reply = msg.createReply();
                     reply.setPerformative(ACLMessage.INFORM);

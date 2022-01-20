@@ -5,6 +5,9 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class FakeConsultationRequestAgent extends Agent {
     @Override
     protected void setup() {
@@ -15,8 +18,8 @@ public class FakeConsultationRequestAgent extends Agent {
         addBehaviour(new TickerBehaviour(this, 3000) {
             @Override
             protected void onTick() {
-                String receivername = "internal_agent_assistant";
-                System.out.println("External agent === Sending message to "+receivername);
+                String receivername = "agent_consultation";
+                System.out.println("Fake consultation request agent === Sending message to "+receivername);
 
 //                Pour rechercher vol :
 //                {
@@ -27,10 +30,14 @@ public class FakeConsultationRequestAgent extends Agent {
 //                    "classe": "string",       // classe souhaité (1er classe, éco)
 //                }
 
+                String str = "2022-01-28 11:30";
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
+                String dateDecollage = dateTime.format(formatter);
                 String flightrequest =
                         "{"+
                                 "\"idRequete\": \"id-azedf\","+     // identifiant de requete
-                                "\"dateDepart\": \"date\","+         // date de départ souhaitée
+                                "\"dateDepart\": \""+dateDecollage+"\","+         // date de départ souhaitée
                                 "\"prix\": \"double\","+             // fourchette de prix
                                 "\"destination\": \"string\","+      // destination souhaitée (soit thème soit destination)
                                 "\"classe\": \"string\""+            // classe souhaité (1er classe, éco)
