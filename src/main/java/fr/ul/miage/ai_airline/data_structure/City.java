@@ -20,7 +20,7 @@ public class City extends Entity {
         STRUCTURE.put("ID", Integer.class);
         STRUCTURE.put("NAME", String.class);
         STRUCTURE.put("DISTANCE_TO_PARIS", Double.class);
-        STRUCTURE.put("TIME_TO_PARIS", Double.class);
+        STRUCTURE.put("TIME_TO_PARIS", Integer.class);
     }
 
     public City() {
@@ -47,11 +47,11 @@ public class City extends Entity {
         set("DISTANCE_TO_PARIS", distanceToParis);
     }
 
-    public Double getTimeToParis() {
-        return (Double) get("TIME_TO_PARIS");
+    public Integer getTimeToParis() {
+        return (Integer) get("TIME_TO_PARIS");
     }
 
-    public void setTimeToParis(@NotNull Double distanceToParis) {
+    public void setTimeToParis(@NotNull Integer distanceToParis) {
         set("TIME_TO_PARIS", distanceToParis);
     }
 }
