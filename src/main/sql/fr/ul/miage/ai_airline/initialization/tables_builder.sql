@@ -1,5 +1,5 @@
 INSERT INTO CITY(ID, NAME, DISTANCE_TO_PARIS, TIME_TO_PARIS) VALUES
-(1, 'Paris', 0),
+(1, 'Paris', 0, ),
 (2, 'New York (Etats-Unis)', 5841.38),
 (3, 'Bangkok (Thaïlande)', 9455.41),
 (4, 'Pointe-à-Pitre (Guadeloupe)', 6759.93),
