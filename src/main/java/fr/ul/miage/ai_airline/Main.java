@@ -24,24 +24,21 @@ public class Main {
         //aérienne.
 
         //Exemple ORM.
+        //Select *
         //ORM.getInstance().findAll(PlaneType.class).forEach(System.out::println);
         //var list = ORM.getInstance().findAll(PlaneType.class);
         //list.get(0);
-
         //Select *
         //ORM.getInstance().findAll(Plane.class).forEach(System.out::println);
-
         //Select where
         //ORM.getInstance().findWhere("WHERE sale_price < 800000", PlaneType.class).forEach(System.out::println)
-
         //Insert
-        Plane plane = new Plane();
-        plane.setPlaneTypeId(1);
-        ORM.getInstance().save(plane);
-        ORM.getInstance().findAll(Plane.class).forEach(System.out::println);
-
+        //Plane plane = new Plane();
+        //plane.setPlaneTypeId(1);
+        //ORM.getInstance().save(plane);
+        //ORM.getInstance().findAll(Plane.class).forEach(System.out::println);
         //Update
-        //var entity = ORM.getInstance().findOne(...);
+        //var entity = (MyEntity) ORM.getInstance().findOne(...);
         //entity.set(...);
         //ORM.getInstance().save(entity);
     }
