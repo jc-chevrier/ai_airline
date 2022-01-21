@@ -83,12 +83,14 @@ public class Builder {
                 //Tant que pas d'avion disponible trouvé.
                 for(Entity entity2 : planes) {
                     plane = (Plane) entity2;
+
                     //Vérification de la disponibilité.
                     planeAvailable = orm.findWhere("INNER JOIN CITY AS C " +
                                                     "ON C.ID = FROM_TABLE.ARRIVAL_CITY_ID " +
                                                     "WHERE FROM_TABLE.PLANE_ID = " + plane.getId() + " " +
                                                     "AND (EXTRACT(EPOCH FROM FROM_TABLE.ARRIVAL_DATE) + C.TIME_TO_PARIS) >= " +//TODO à rediscuter.
                                                     startDate.toInstant().getEpochSecond(), Flight.class).isEmpty();
+
                     //Si l'avion est disponible.
                     if(planeAvailable) {
                         break;
@@ -125,7 +127,7 @@ public class Builder {
                 for(Entity entity2 : planeTypeClasses) {
                     var planeTypeClass = (PlaneTypeClass) entity2;
 
-                    //Calcul du prix plancher par place.
+                    //Calcul du prix plancher de la place dans la classe.
                     Double floorPlacePrice;
                     if(isCargo) {
                         floorPlacePrice = floorPricePerPlace;
