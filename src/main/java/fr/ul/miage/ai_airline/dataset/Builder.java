@@ -4,8 +4,6 @@ import fr.ul.miage.ai_airline.data_structure.*;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 
@@ -61,6 +59,13 @@ public class Builder {
         var citysWithoutParis = orm.findWhere("WHERE ID != 1", City.class);
         var startDate = Date.from(Instant.parse("2022-01-27T23:00:00.00Z"));//Décalage d'une heure car UTC + 1.//TODO à rediscuter.
         var endDate = Date.from(Instant.parse("2022-01-30T22:59:00.00Z"));//TODO à rediscuter.
+        var fuelCostEuroPerL = 0.4;
+        var consommationFuelCostLPerKm = 8.39;
+        var taxePassengerEuro = 18;
+        var maintenanceCost = 1070;
+        var rateFirstClass = 0.5;
+        var rateEconomicClass = 0.3;
+        var rateBusinessClass = 0.2;
         //Tant que date de fin de période des vols pas atteinte.
         while(startDate.before(endDate)) {
             //Choix de la ville d'arrivée.
@@ -78,11 +83,13 @@ public class Builder {
                 //Tant que pas d'avion disponible trouvé.
                 for(Entity entity2 : planes) {
                     plane = (Plane) entity2;
+                    //Vérification de la disponibilité.
                     planeAvailable = orm.findWhere("INNER JOIN CITY AS C " +
                                                     "ON C.ID = FROM_TABLE.ARRIVAL_CITY_ID " +
                                                     "WHERE FROM_TABLE.PLANE_ID = " + plane.getId() + " " +
-                                                    "AND (EXTRACT(EPOCH FROM FROM_TABLE.ARRIVAL_DATE) + C.TIME_TO_PARIS) >= " +
+                                                    "AND (EXTRACT(EPOCH FROM FROM_TABLE.ARRIVAL_DATE) + C.TIME_TO_PARIS) >= " +//TODO à rediscuter.
                                                     startDate.toInstant().getEpochSecond(), Flight.class).isEmpty();
+                    //Si l'avion est disponible.
                     if(planeAvailable) {
                         break;
                     }
@@ -94,6 +101,10 @@ public class Builder {
                     break;
                 }
 
+                //Récupération du type d'avion et de ses classes.
+                var planeType = (PlaneType) orm.findOneWhere("WHERE ID = " + plane.getPlaneTypeId(), PlaneType.class);
+                var planeTypeClasses = orm.findWhere("WHERE PLANE_TYPE_ID = " + planeType.getId(), PlaneTypeClass.class);
+
                 //Calcul de la date d'arrivée.
                 var arrivalDate = Date.from(startDate.toInstant().plusSeconds(arrivalCity.getTimeToParis()));
 
@@ -101,21 +112,36 @@ public class Builder {
                 var flight = new Flight();
                 flight.setStartDate(startDate);
                 flight.setArrivalDate(arrivalDate);
-                flight.setFloorPrice(0.0);
+                flight.setFloorPrice((arrivalCity.getDistanceToParis() * consommationFuelCostLPerKm * fuelCostEuroPerL) +
+                                     (planeType.getCountTotalPlaces() * taxePassengerEuro));
                 flight.setStartCityId(startCityParis.getId());
                 flight.setArrivalCityId(arrivalCity.getId());
                 flight.setPlaneId(plane.getId());
                 orm.save(flight);
 
                 //Création et insertion des classes du vol.
-                var planeType = orm.findOneWhere("WHERE ID = " + plane.getPlaneTypeId(), PlaneType.class);
-                var planeTypeClasses = orm.findWhere("WHERE PLANE_TYPE_ID = " + planeType.getId(), PlaneTypeClass.class);
+                Double floorPricePerPlace = flight.getFloorPrice() / planeType.getCountTotalPlaces();
+                Boolean isCargo = planeTypeClasses.size() > 1;
                 for(Entity entity2 : planeTypeClasses) {
-                    //Création et insertion d'une classe du vol.
                     var planeTypeClass = (PlaneTypeClass) entity2;
+
+                    //Calcul du prix plancher par place.
+                    Double floorPlacePrice;
+                    if(isCargo) {
+                        floorPlacePrice = floorPricePerPlace;
+                        switch (planeTypeClass.getName()) {
+                            case "Première" -> floorPricePerPlace *= rateFirstClass;
+                            case "Economique" -> floorPricePerPlace *= rateEconomicClass;
+                            case "Business" -> floorPricePerPlace *= rateBusinessClass;
+                        }
+                    } else {
+                        floorPlacePrice = floorPricePerPlace;
+                    }
+
+                    //Création et insertion d'une classe du vol.
                     var flightClass = new FlightClass();
-                    flightClass.setFloorPlacePrice(0.0);
-                    flightClass.setPlacePrice(0.0);
+                    flightClass.setFloorPlacePrice(floorPlacePrice);
+                    flightClass.setPlacePrice(flightClass.getFloorPlacePrice() + flightClass.getFloorPlacePrice() * 0.1);//TODO à rediscuter.
                     flightClass.setCountAvailablePlaces(planeTypeClass.getCountTotalPlaces());
                     flightClass.setCountOccupiedPlaces(0);
                     flightClass.setFlightId(flight.getId());
@@ -126,6 +152,6 @@ public class Builder {
         }
 
         //Sauvegarde des données globales compagnie.
-        //TODO
+        //TODO à voir si c'est nécessaire.
     }
 }

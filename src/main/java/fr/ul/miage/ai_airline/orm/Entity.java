@@ -48,7 +48,7 @@ public abstract class Entity {
      */
     public Object get(@NotNull String attribute) {
         if(!has(attribute)) {
-            throw new IllegalArgumentException("L'attribute " + attribute + " est introuvable !");
+            throw new IllegalArgumentException("L'attribut " + attribute + " est introuvable !");
         }
         return attributes.get(attribute);
     }
