@@ -27,6 +27,14 @@ public class Flight extends Entity {
         STRUCTURE.put("PLANE_ID", Integer.class);
     }
 
+    public Flight() {
+        super();
+    }
+
+    public Flight(@NotNull Map<String, Object> attributes) {
+        super(attributes);
+    }
+
     public Date getStartDate() {
         return (Date) get("START_DATE");
     }

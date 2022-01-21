@@ -21,6 +21,14 @@ public class Plane extends Entity {
         STRUCTURE.put("PLANE_TYPE_ID", Integer.class);
     }
 
+    public Plane() {
+        super();
+    }
+
+    public Plane(@NotNull Map<String, Object> attributes) {
+        super(attributes);
+    }
+
     public Integer getPlaneTypeId() {
         return (Integer) get("PLANE_TYPE_ID");
     }

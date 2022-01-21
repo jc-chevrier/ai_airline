@@ -28,6 +28,14 @@ public class FlightClass extends Entity {
         STRUCTURE.put("PLANE_TYPE_CLASS_ID", Integer.class);
     }
 
+    public FlightClass() {
+        super();
+    }
+
+    public FlightClass(@NotNull Map<String, Object> attributes) {
+        super(attributes);
+    }
+
     public Double getFloorPlacePrice() {
         return (Double) get("FLOOR_PLACE_PRICE");
     }

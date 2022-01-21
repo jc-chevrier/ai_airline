@@ -59,10 +59,10 @@ public class PlaneType extends Entity {
     }
 
     public Integer getCountTotalPlaces() {
-        return (Integer) get("COUNT_PLACES_TOTAL");
+        return (Integer) get("COUNT_TOTAL_PLACES");
     }
 
     public void setCountTotalPlaces(@NotNull Integer countTotalPlaces) {
-        set("COUNT_PLACES_TOTAL", countTotalPlaces);
+        set("COUNT_TOTAL_PLACES", countTotalPlaces);
     }
 }
