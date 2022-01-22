@@ -1,5 +1,7 @@
 package fr.ul.miage.ai_airline.tool;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 
 /**
@@ -12,7 +14,7 @@ public class DateFormatter {
      * @param date
      * @return
      */
-    public static String formatAtISO8601(Date date) {
+    public static String formatAtISO8601(@NotNull Date date) {
         return null; //TODO
     }
 }
