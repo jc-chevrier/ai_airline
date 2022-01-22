@@ -14,8 +14,9 @@ import org.json.JSONObject;
 import java.util.Date;
 
 /**
- * Mock pour simuler l'agent de l'assistant client
- * qui envoie des requêtes de réservation de vol.
+ * Mock pour simuler l'agent de l'assistant
+ * client qui envoie des requêtes de
+ * réservation de vol.
  */
 public class MockReservationRequestAgent extends Agent {
     //ORM pour l'échange avec la base de données.

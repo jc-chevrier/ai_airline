@@ -13,7 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Agent pour la gestion des requêtes de réservation.
+ * Agent pour la gestion des requêtes
+ * de réservation.
  */
 public class ReservationAgent extends Agent {
     //ORM pour l'échange avec la base de données.

@@ -1,23 +1,25 @@
 package fr.ul.miage.ai_airline.agent;
 
+import fr.ul.miage.ai_airline.data_structure.*;
+import fr.ul.miage.ai_airline.orm.Entity;
+import fr.ul.miage.ai_airline.orm.ORM;
+import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
-        import fr.ul.miage.ai_airline.data_structure.*;
-        import fr.ul.miage.ai_airline.orm.Entity;
-        import fr.ul.miage.ai_airline.orm.ORM;
-        import jade.core.Agent;
-        import jade.core.behaviours.TickerBehaviour;
-        import jade.lang.acl.ACLMessage;
-        import jade.lang.acl.MessageTemplate;
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
-
-        import java.time.LocalDateTime;
-        import java.time.ZoneId;
-        import java.time.format.DateTimeFormatter;
-        import java.util.Date;
-        import java.util.List;
-
+/**
+ * Agent pour la gestion des requêtes
+ * de recherche de vol.
+ */
 public class SearchAgent extends Agent {
     @Override
     protected void setup() {

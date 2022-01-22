@@ -5,10 +5,14 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Mock pour simuler l'agent de l'assistant
+ * client qui envoie des requêtes de
+ * recherche de vol.
+ */
 public class MockSearchRequestAgent extends Agent {
     @Override
     protected void setup() {
