@@ -49,7 +49,7 @@ public class Starter {
         //Récupération de la configuration pour le lancement de Jade.
         String host = (String) configuration.get("main_host");
         String isGUI = (String) configuration.get("gui");
-        String RMIserverPort = (String) configuration.get("local_port");
+        String RMIServerPort = (String) configuration.get("local_port");
         String containerName = (String) configuration.get("container_name");
 
         //Lancement du conteneur des agents.
@@ -57,7 +57,7 @@ public class Starter {
         Profile profile = new ProfileImpl();
         profile.setParameter(Profile.MAIN_HOST, host);
         profile.setParameter(Profile.GUI, isGUI);
-        profile.setParameter(Profile.LOCAL_PORT, RMIserverPort);
+        profile.setParameter(Profile.LOCAL_PORT, RMIServerPort);
         profile.setParameter(Profile.CONTAINER_NAME, containerName);
         ContainerController containerController = runtime.createMainContainer(profile);
 
@@ -103,4 +103,3 @@ public class Starter {
         }
     }
 }
-
