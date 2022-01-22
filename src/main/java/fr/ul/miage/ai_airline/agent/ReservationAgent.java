@@ -110,9 +110,9 @@ public class ReservationAgent extends Agent {
                     var response = request.createReply();
                     //Si la requête était correcte.
                     if(correctRequest) {
-                        response .setPerformative(ACLMessage.CONFIRM);
+                        response.setPerformative(ACLMessage.CONFIRM);
                     } else {
-                        response .setPerformative(ACLMessage.FAILURE);
+                        response.setPerformative(ACLMessage.FAILURE);
                     }
                     response.setContent(JSONResponse.toString());
                     send(response);
