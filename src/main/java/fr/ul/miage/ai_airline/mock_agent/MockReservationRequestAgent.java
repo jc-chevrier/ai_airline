@@ -5,7 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
-public class FakeReservationRequestAgent extends Agent {
+public class MockReservationRequestAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Je un agent qui envoie des requêtes de réservation de vol(s) : " +

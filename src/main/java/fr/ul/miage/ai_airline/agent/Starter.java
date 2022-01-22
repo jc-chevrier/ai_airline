@@ -1,6 +1,8 @@
 package fr.ul.miage.ai_airline.agent;
 
 import fr.ul.miage.ai_airline.Main;
+import fr.ul.miage.ai_airline.mock_agent.MockConsultationRequestAgent;
+import fr.ul.miage.ai_airline.mock_agent.MockReservationRequestAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -60,14 +62,14 @@ public class Starter {
         AgentController agentConsultationController;                            // agent écoutant les consultations
         try {
             // Réservations
-            agentFakeReservationController = containerController.createNewAgent("fake_agent_reservation", "fr.ul.miage.ai_airline.agent.FakeReservationRequestAgent", null);
+            agentFakeReservationController = containerController.createNewAgent("fake_agent_reservation", MockReservationRequestAgent.class.getName(), null);
             agentFakeReservationController.start();
-            agentReservationController = containerController.createNewAgent("agent_reservation", "fr.ul.miage.ai_airline.agent.ReservationAgent", null);
+            agentReservationController = containerController.createNewAgent("agent_reservation", ReservationAgent.class.getName(), null);
             agentReservationController.start();
             // Consultations
-            agentFakeConsultationController = containerController.createNewAgent("fake_agent_consultation", "fr.ul.miage.ai_airline.agent.FakeConsultationRequestAgent", null);
+            agentFakeConsultationController = containerController.createNewAgent("fake_agent_consultation", MockConsultationRequestAgent.class.getName(), null);
             agentFakeConsultationController.start();
-            agentConsultationController = containerController.createNewAgent("agent_consultation", "fr.ul.miage.ai_airline.agent.ConsultationAgent", null);
+            agentConsultationController = containerController.createNewAgent("agent_consultation", ConsultationAgent.class.getName(), null);
             agentConsultationController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur lors du démarrage des agents");
