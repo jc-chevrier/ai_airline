@@ -19,10 +19,10 @@ public class Builder {
      * la compagnie aérienne, la peupler.
      */
     public static void build() {
-        //Etape 1 : nettoyage des tables.
-        orm.removeAll(FlightClass.class);
-        orm.removeAll(Flight.class);
-        orm.removeAll(Plane.class);
+        //Etape 1 : nettoyage des tables (reset sequence & remove all).
+        orm.reset(FlightClass.class);
+        orm.reset(Flight.class);
+        orm.reset(Plane.class);
 
         //Etape 2 : construction des avions.
         var poolMoneyInitialization = 10000000;
