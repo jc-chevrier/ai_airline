@@ -22,7 +22,6 @@ public class PlaneType extends Entity {
         STRUCTURE.put("ID", Integer.class);
         STRUCTURE.put("NAME", String.class);
         STRUCTURE.put("SALE_PRICE", Double.class);
-        STRUCTURE.put("MAINTENANCE_COST", Double.class);
         STRUCTURE.put("COUNT_TOTAL_PLACES", Integer.class);
     }
 
