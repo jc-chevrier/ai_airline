@@ -1,9 +1,7 @@
 package fr.ul.miage.ai_airline.agent;
 
-
 import fr.ul.miage.ai_airline.data_structure.Flight;
 import fr.ul.miage.ai_airline.data_structure.FlightClass;
-import fr.ul.miage.ai_airline.data_structure.PlaneType;
 import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
@@ -20,13 +18,13 @@ public class ReservationAgent extends Agent {
         System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation : " +
                             getLocalName() + " aka " + getAID().getName() + ".");
 
-        //Comportement d'écoute des requêtesd de  réservations
+        //Comportement d'écoute des requêtes de réservations
         addBehaviour(new TickerBehaviour(this, 1000) {
             @Override
             protected void onTick() {
                 //Log de debug.
-                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "]" +
-                                   " Nouvelle écoute des requêtes de réservation.");
+                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                   "Nouvelle écoute des requêtes de réservation.");
 
                 //Attente d'une nouvelle requête de réservation.
                 var reservationRequest = receive();
@@ -34,8 +32,8 @@ public class ReservationAgent extends Agent {
                 //Nouvelle requête de réservation.
                 if (reservationRequest != null) {
                     //Log de debug.
-                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "]" +
-                                       " Nouvelle requête de réservation reçue de : " +
+                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                       "Nouvelle requête de réservation reçue de : " +
                                        reservationRequest.getSender().getLocalName());
 
                     //Analyse de la requête, et récupération de ses données.
@@ -75,7 +73,10 @@ public class ReservationAgent extends Agent {
                         if(planeTypeClass.getName().equals(className)) {
                             //Si le nombre de places demandé est disponible.
                             if(flightClass.hasCountAvailablePlaces(countAskedPlaces)) {
+                                //Modification des nombres de places disponibles et occupées.
                                 flightClass.incrementPlaces(-countAskedPlaces);
+                                //Sauvegarde des modifications.
+                                orm.save(flightClass);
                             } else {
                                 correctRequest = false;
                             }
