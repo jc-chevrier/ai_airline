@@ -38,13 +38,13 @@ public class Builder {
             //Récupération du type d'avion.
             var planeType = (PlaneType) orm.findOne(randomPlaneTypeId, PlaneType.class);
 
+            //Achat d'un avion.
             //Si assez d'argent pour acheter l'avion.
             if(planeType.getSalePrice() <= poolMoneyInitialization) {
                 //Création et insertion d'un nouvel avion.
                 var plane = new Plane();
                 plane.setPlaneTypeId(planeType.getId());
                 orm.save(plane);
-
                 //Modification du solde d'argent restant.
                 poolMoneyInitialization -= planeType.getSalePrice();
             } else {
@@ -83,14 +83,12 @@ public class Builder {
                 //Tant que pas d'avion disponible trouvé.
                 for(var entity2 : planes) {
                     plane = (Plane) entity2;
-
                     //Vérification de la disponibilité.
                     planeAvailable = orm.findWhere("INNER JOIN CITY AS C " +
                                                     "ON C.ID = FROM_TABLE.ARRIVAL_CITY_ID " +
                                                     "WHERE FROM_TABLE.PLANE_ID = " + plane.getId() + " " +
                                                     "AND (EXTRACT(EPOCH FROM FROM_TABLE.ARRIVAL_DATE) + C.TIME_TO_PARIS) >= " +//TODO à rediscuter.
                                                     startDate.toInstant().getEpochSecond(), Flight.class).isEmpty();
-
                     //Si l'avion est disponible.
                     if(planeAvailable) {
                         break;
@@ -126,7 +124,6 @@ public class Builder {
                 Boolean isCargo = planeTypeClasses.size() > 1;
                 for(var entity2 : planeTypeClasses) {
                     var planeTypeClass = (PlaneTypeClass) entity2;
-
                     //Calcul du prix plancher de la place dans la classe.
                     Double floorPlacePrice;
                     if(isCargo) {
@@ -139,7 +136,6 @@ public class Builder {
                     } else {
                         floorPlacePrice = floorPricePerPlace;
                     }
-
                     //Création et insertion d'une classe du vol.
                     var flightClass = new FlightClass();
                     flightClass.setFloorPlacePrice(floorPlacePrice);

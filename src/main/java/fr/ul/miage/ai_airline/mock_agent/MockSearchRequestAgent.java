@@ -9,7 +9,7 @@ import jade.lang.acl.MessageTemplate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class MockConsultationRequestAgent extends Agent {
+public class MockSearchRequestAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Je un agent qui envoie des requêtes de consultation de vols : " +

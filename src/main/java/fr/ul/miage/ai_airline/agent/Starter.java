@@ -1,7 +1,7 @@
 package fr.ul.miage.ai_airline.agent;
 
 import fr.ul.miage.ai_airline.Main;
-import fr.ul.miage.ai_airline.mock_agent.MockConsultationRequestAgent;
+import fr.ul.miage.ai_airline.mock_agent.MockSearchRequestAgent;
 import fr.ul.miage.ai_airline.mock_agent.MockReservationRequestAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -75,13 +75,13 @@ public class Starter {
         try {
             //Lancement du mock de l'agent de requête de recherche de vol.
             mockConsultationAgentController = containerController.createNewAgent(mockConsultationAgentName,
-                                                                                MockConsultationRequestAgent.class.getName(),
-                                                                                null);
+                                                                                 MockSearchRequestAgent.class.getName(),
+                                                                                 null);
             mockConsultationAgentController.start();
 
             //Lancement de l'agent de recherche de vol.
             consultationAgentController = containerController.createNewAgent(consultationAgentName,
-                                                                             ConsultationAgent.class.getName(),
+                                                                             SearchAgent.class.getName(),
                                                                              null);
             consultationAgentController.start();
 

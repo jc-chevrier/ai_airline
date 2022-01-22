@@ -18,7 +18,7 @@ package fr.ul.miage.ai_airline.agent;
         import java.util.Date;
         import java.util.List;
 
-public class ConsultationAgent extends Agent {
+public class SearchAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Je suis l'agent de la compagnie aérienne qui écoute les requêtes de consultation : " +

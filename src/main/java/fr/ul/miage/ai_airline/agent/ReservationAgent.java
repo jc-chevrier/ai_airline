@@ -16,12 +16,12 @@ import org.json.JSONObject;
  */
 public class ReservationAgent extends Agent {
     //ORM pour l'échange avec la base de données.
-    public static ORM orm = ORM.getInstance();
+    private static ORM orm = ORM.getInstance();
 
     @Override
     protected void setup() {
         //Log de debug.
-        System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation : " +
+        System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation: " +
                             getLocalName() + " aka " + getAID().getName() + ".");
 
         //Comportement d'écoute des requêtes de réservations
@@ -39,23 +39,28 @@ public class ReservationAgent extends Agent {
                 if (request != null) {
                     //Log de debug.
                     System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                       "Nouvelle requête de réservation reçue de : " +
-                                       request.getSender().getLocalName());
+                                       "Nouvelle requête de réservation reçue de: " +
+                                        request.getSender().getLocalName() + ".");
 
-                    //Analyse de la requête, et récupération de ses données.
+                    //Analyse de la requête, et extraction de ses données.
                     JSONObject JSONRequest = null;
                     Integer resquestId = null, flightId = null,  countAskedPlaces = null;
                     String className = null;
                     try {
+                        //Analyse de contenu de la requête.
                         JSONRequest = new JSONObject(request.getContent());
+                        //Log de debug.
+                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                            "Contenu de la requête de réservation reçue: " + JSONRequest + "!");
+                        //Extraction des données du contenu de la requête reçue.
                         resquestId = JSONRequest.getInt("idRequete");
                         flightId = JSONRequest.getInt("idVol");
                         className = JSONRequest.getString("classe");
                         countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
+                        //Log de debug.
                         System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                           "Problème à l'analyse d'une requête de réservation !");
-                        System.err.println(request.getContent());
+                                           "Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
                         e.printStackTrace();
                     }
 
@@ -82,6 +87,10 @@ public class ReservationAgent extends Agent {
                                 flightClass.incrementPlaces(-countAskedPlaces);
                                 //Sauvegarde des modifications.
                                 orm.save(flightClass);
+                                //Log de debug.
+                                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                                    "Réservation de la classe faite: " + new JSONObject(flightClass) + ".");
+
                             } else {
                                 correctRequest = false;
                             }
@@ -104,7 +113,7 @@ public class ReservationAgent extends Agent {
 
                     //Log de debug.
                     System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                        "Envoi d'une réponse: " + JSONResponse.toString() + ".");
+                                        "Envoi d'une réponse à la requête de réservation: " + JSONResponse + ".");
 
                     //Envoi de la réponse.
                     var response = request.createReply();
