@@ -76,7 +76,7 @@ public class Starter {
                                                                             null);
             reservationAgentController.start();
         } catch (StaleProxyException e) {
-            System.err.println("Erreur lors du démarrage des agents !");
+            System.err.println("Erreur! Problème au cours du démarrage des agents!");
             e.printStackTrace();
             System.exit(1);
         }

@@ -40,7 +40,7 @@ public class Configuration {
             configuration.load(Main.class.getResourceAsStream(configurationFile));
             return configuration;
         } catch (IOException e) {
-            System.err.println("Erreur! Problème au cours du chargement de la configuration des agents !");
+            System.err.println("Erreur! Problème au cours du chargement de la configuration des agents!");
             e.printStackTrace();
             System.exit(1);
             return null;

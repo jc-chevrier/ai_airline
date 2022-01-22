@@ -75,7 +75,7 @@ public class ReservationAgent extends Agent {
                         //Log de debug.
                         if(debugMode) {
                             System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                               "Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
+                                               "Erreur! Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
                         }
                         e.printStackTrace();
                     }
