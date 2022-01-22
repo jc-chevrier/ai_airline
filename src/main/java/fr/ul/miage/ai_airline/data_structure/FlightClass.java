@@ -83,4 +83,13 @@ public class FlightClass extends Entity {
     public void setPlaneTypeClassId(@NotNull Integer planeTypeClassId) {
         set("PLANE_TYPE_CLASS_ID", planeTypeClassId);
     }
+
+    public boolean hasCountAvailablePlaces(Integer countAvailablePlaces) {
+        return countAvailablePlaces <= getCountAvailablePlaces();
+    }
+
+    public void incrementPlaces(Integer countPlaces) {
+        setCountAvailablePlaces(getCountAvailablePlaces() + countPlaces);
+        setCountOccupiedPlaces(getCountOccupiedPlaces() - countPlaces);
+    }
 }

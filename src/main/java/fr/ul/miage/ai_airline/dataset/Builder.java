@@ -81,7 +81,7 @@ public class Builder {
                 Plane plane = null;
                 Boolean planeAvailable = false;
                 //Tant que pas d'avion disponible trouvé.
-                for(Entity entity2 : planes) {
+                for(var entity2 : planes) {
                     plane = (Plane) entity2;
 
                     //Vérification de la disponibilité.
@@ -124,7 +124,7 @@ public class Builder {
                 //Création et insertion des classes du vol.
                 Double floorPricePerPlace = flight.getFloorPrice() / planeType.getCountTotalPlaces();
                 Boolean isCargo = planeTypeClasses.size() > 1;
-                for(Entity entity2 : planeTypeClasses) {
+                for(var entity2 : planeTypeClasses) {
                     var planeTypeClass = (PlaneTypeClass) entity2;
 
                     //Calcul du prix plancher de la place dans la classe.
@@ -132,7 +132,7 @@ public class Builder {
                     if(isCargo) {
                         floorPlacePrice = floorPricePerPlace;
                         switch (planeTypeClass.getName()) {
-                            case "Première" -> floorPricePerPlace *= rateFirstClass;
+                            case "Premiere" -> floorPricePerPlace *= rateFirstClass;
                             case "Economique" -> floorPricePerPlace *= rateEconomicClass;
                             case "Business" -> floorPricePerPlace *= rateBusinessClass;
                         }
