@@ -34,7 +34,6 @@ public class ReservationAgent extends Agent {
                         e.printStackTrace();
                     }
 
-
                     ACLMessage reply = msg.createReply();
                     reply.setPerformative(ACLMessage.INFORM);
                     reply.setContent("Pong");

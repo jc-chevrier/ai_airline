@@ -1,4 +1,4 @@
-package fr.ul.miage.ai_airline.agent;
+package fr.ul.miage.ai_airline.mock_agent;
 
 import jade.core.AID;
 import jade.core.Agent;
