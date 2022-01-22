@@ -104,7 +104,7 @@ public class ReservationAgent extends Agent {
 
                     //Log de debug.
                     System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                        "Envoi d'une réponse:" + JSONResponse.toString());
+                                        "Envoi d'une réponse: " + JSONResponse.toString() + ".");
 
                     //Envoi de la réponse.
                     var response = request.createReply();
