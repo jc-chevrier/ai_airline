@@ -37,19 +37,19 @@ public class ReservationAgent extends Agent {
                                        reservationRequest.getSender().getLocalName());
 
                     //Analyse de la requête, et récupération de ses données.
-                    JSONObject JSON = null;
+                    JSONObject JSONRequest = null;
                     Integer resquestId = null, flightId = null,  countAskedPlaces = null;
                     String className = null;
                     try {
-                        JSON = new JSONObject(reservationRequest.getContent());
-                        resquestId = JSON.getInt("idRequete");
-                        flightId = JSON.getInt("idVol");
-                        className = JSON.getString("classe");
-                        countAskedPlaces = JSON.getInt("nbPlaces");
+                        JSONRequest = new JSONObject(reservationRequest.getContent());
+                        resquestId = JSONRequest.getInt("idRequete");
+                        flightId = JSONRequest.getInt("idVol");
+                        className = JSONRequest.getString("classe");
+                        countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
                         System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "]" +
                                            " Problème à l'écoute d'une requête de réservation !");
-                        System.out.println(reservationRequest.getContent());
+                        System.err.println(reservationRequest.getContent());
                         e.printStackTrace();
                     }
 
@@ -88,25 +88,24 @@ public class ReservationAgent extends Agent {
                     }
 
                     //Réponse à la requête.
-                    var reservationResponse = reservationRequest.createReply();
-                    var JSONReservationResponse = new JSONObject();
-                    JSONReservationResponse.put("idRequete", resquestId);
+                    var response = reservationRequest.createReply();
+                    var JSONResponse = new JSONObject();
+                    JSONResponse.put("idRequete", resquestId);
 
                     //Objet JSON de réponse.
                     //Si la requête était correcte.
                     if(correctRequest) {
-                        reservationResponse .setPerformative(ACLMessage.CONFIRM);
-                        JSONReservationResponse.put("resultat", "Réussite");
+                        response .setPerformative(ACLMessage.CONFIRM);
+                        JSONResponse.put("resultat", "Réussite");
                     } else {
-                        reservationResponse .setPerformative(ACLMessage.FAILURE);
-                        JSONReservationResponse.put("resultat", "Echec");
+                        response .setPerformative(ACLMessage.FAILURE);
+                        JSONResponse.put("resultat", "Echec");
                     }
-                    reservationResponse.setContent(JSONReservationResponse.toString());
-                    send(reservationResponse);
+                    response.setContent(JSONResponse.toString());
+                    send(response);
                 }
                 block();
             }
         });
     }
 }
-
