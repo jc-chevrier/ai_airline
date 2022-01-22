@@ -31,17 +31,18 @@ public class MockConsultationRequestAgent extends Agent {
 //                    "classe": "string",       // classe souhaité (1er classe, éco)
 //                }
 
-                String str = "2022-01-28 11:30";
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                String str = "2022-01-28 11:30:30";
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 LocalDateTime dateTime = LocalDateTime.parse(str, formatter);
                 String dateDecollage = dateTime.format(formatter);
                 String flightrequest =
                         "{"+
                                 "\"idRequete\": \"id-azedf\","+     // identifiant de requete
                                 "\"dateDepart\": \""+dateDecollage+"\","+         // date de départ souhaitée
-                                "\"prix\": \"double\","+             // fourchette de prix
-                                "\"destination\": \"string\","+      // destination souhaitée (soit thème soit destination)
-                                "\"classe\": \"string\""+            // classe souhaité (1er classe, éco)
+                                "\"prixHaut\": \"200.00\","+             // fourchette de prix
+                                "\"prixBas\": \"10.00\","+             // fourchette de prix
+                                "\"destination\": \"Barcelone (Espagne)\","+      // destination souhaitée (soit thème soit destination)
+                                "\"classe\": \"Economique\""+            // classe souhaité (1er classe, éco)
                                 "}";
 
                 // Send response
