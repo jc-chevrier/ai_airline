@@ -42,17 +42,21 @@ public class Starter {
      */
     public static void start() {
         //Chargement de la configuration.
-        if(configuration == null) {
+        if (configuration == null) {
             loadConfiguration();
         }
+        String host = (String) configuration.get("main_host");
+        String isGUI = (String) configuration.get("gui");
+        String RMIserverPort = (String) configuration.get("local_port");
+        String containerName = (String) configuration.get("container_name");
 
         Runtime runtime = Runtime.instance();
         // Configuration du conteneur des agents de la compagnie aérienne
         Profile profile = new ProfileImpl();
-        profile.setParameter(Profile.MAIN_HOST, (String) configuration.get("main_host"));          // localhost
-        profile.setParameter(Profile.GUI, (String) configuration.get("gui"));                      // -gui
-        profile.setParameter(Profile.LOCAL_PORT, (String) configuration.get("local_port"));        // -port
-        profile.setParameter(Profile.CONTAINER_NAME, (String) configuration.get("container_name"));// -name
+        profile.setParameter(Profile.MAIN_HOST, host);                  // localhost
+        profile.setParameter(Profile.GUI, isGUI);                       // -gui
+        profile.setParameter(Profile.LOCAL_PORT, RMIserverPort);        // -port
+        profile.setParameter(Profile.CONTAINER_NAME, containerName);    // -name
         ContainerController containerController = runtime.createMainContainer(profile);
 
         // Liste des agents a démarrer
@@ -60,16 +64,21 @@ public class Starter {
         AgentController agentFakeConsultationController;                        // agent de demandes de réservations
         AgentController agentReservationController;                             // agent écoutant les réservations
         AgentController agentConsultationController;                            // agent écoutant les consultations
+        String mockReservationName = (String) configuration.get("mock_reservation_name");
+        String mockConsultationName = (String) configuration.get("mock_consultation_name");
+        String reservationName = (String) configuration.get("reservation_name");
+        String consultationName = (String) configuration.get("consultation_name");
+
         try {
             // Réservations
-            agentFakeReservationController = containerController.createNewAgent("fake_agent_reservation", MockReservationRequestAgent.class.getName(), null);
+            agentFakeReservationController = containerController.createNewAgent(mockReservationName, MockReservationRequestAgent.class.getName(), null);
             agentFakeReservationController.start();
-            agentReservationController = containerController.createNewAgent("agent_reservation", ReservationAgent.class.getName(), null);
+            agentReservationController = containerController.createNewAgent(reservationName, ReservationAgent.class.getName(), null);
             agentReservationController.start();
             // Consultations
-            agentFakeConsultationController = containerController.createNewAgent("fake_agent_consultation", MockConsultationRequestAgent.class.getName(), null);
+            agentFakeConsultationController = containerController.createNewAgent(mockConsultationName, MockConsultationRequestAgent.class.getName(), null);
             agentFakeConsultationController.start();
-            agentConsultationController = containerController.createNewAgent("agent_consultation", ConsultationAgent.class.getName(), null);
+            agentConsultationController = containerController.createNewAgent(consultationName, ConsultationAgent.class.getName(), null);
             agentConsultationController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur lors du démarrage des agents");
@@ -77,6 +86,5 @@ public class Starter {
             System.exit(1);
         }
     }
-
-    }
+}
 

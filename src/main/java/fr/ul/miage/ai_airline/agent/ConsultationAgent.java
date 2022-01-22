@@ -4,6 +4,7 @@ package fr.ul.miage.ai_airline.agent;
         import jade.core.Agent;
         import jade.core.behaviours.TickerBehaviour;
         import jade.lang.acl.ACLMessage;
+        import jade.lang.acl.MessageTemplate;
         import org.json.JSONException;
         import org.json.JSONObject;
 
@@ -22,8 +23,9 @@ public class ConsultationAgent extends Agent {
             protected void onTick() {
                 System.out.println("Tick listening consultation");
 
-                // Wait for incoming message
-                ACLMessage msg = receive();
+                // Wait for incoming message of fipa-type ACLMessage.REQUEST
+                MessageTemplate onlyREQUEST = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+                ACLMessage msg = receive(onlyREQUEST);
                 if (msg != null) {
                     System.out.println("Listention consultation agent === Message received from " + msg.getSender().getLocalName());
 //                  System.out.println("Internal agent === Message content is : " + getLocalName() + " <- " + msg.getContent());
@@ -41,9 +43,10 @@ public class ConsultationAgent extends Agent {
                         // string : dateTime.format(formatter)  == 2022-01-28 11:30
                         // datetime == 2022-01-28T11:30
 
+
                     } catch (JSONException e) {
                         System.err.println("AGENT LISTEN CONSULTATION CRASH");
-                        System.out.println(msg.getContent());
+                        System.err.println(msg.getContent());
                         e.printStackTrace();
                         System.exit(1);
                     }

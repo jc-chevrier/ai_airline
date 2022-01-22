@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,21 +44,21 @@ public class MockConsultationRequestAgent extends Agent {
                                 "\"classe\": \"string\""+            // classe souhaité (1er classe, éco)
                                 "}";
 
-                // Send message
-                ACLMessage request = new ACLMessage(ACLMessage.INFORM);
-//                request.setContent("Ping");
+                // Send response
+                ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                 request.setContent(flightrequest);
                 request.addReceiver(new AID(receivername, AID.ISLOCALNAME));
                 send(request);
+                MessageTemplate onlyINFORM = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
                 // Listening to response
-                ACLMessage response = receive();
+                ACLMessage response = receive(onlyINFORM);
                 if (response != null) {
                     System.out.println("External agent === Message received from " + response.getSender().getLocalName());
                     System.out.println("External agent === Message content is : " + getLocalName() + " <- " + response.getContent());
-                    ACLMessage reply = response.createReply();
-                    reply.setPerformative(ACLMessage.INFORM);
-                    reply.setContent("Pong");
-                    send(reply);
+//                    ACLMessage reply = response.createReply();
+//                    reply.setPerformative(ACLMessage.INFORM);
+//                    reply.setContent("Pong");
+//                    send(reply);
                 }
                 block();
 
