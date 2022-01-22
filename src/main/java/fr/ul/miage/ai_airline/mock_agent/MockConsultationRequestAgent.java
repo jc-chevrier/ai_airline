@@ -8,7 +8,7 @@ import jade.lang.acl.ACLMessage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class FakeConsultationRequestAgent extends Agent {
+public class MockConsultationRequestAgent extends Agent {
     @Override
     protected void setup() {
         System.out.println("Je un agent qui envoie des requêtes de consultation de vols : " +
