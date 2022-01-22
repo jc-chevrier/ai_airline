@@ -28,6 +28,9 @@ public class ConsultationAgent extends Agent {
                     System.out.println("Listention consultation agent === Message received from " + msg.getSender().getLocalName());
 //                  System.out.println("Internal agent === Message content is : " + getLocalName() + " <- " + msg.getContent());
                     try {
+                        System.out.println("----------- BEGIN ----------------");
+                        System.out.println(msg.getContent());
+                        System.out.println("----------- END ----------------");
                         JSONObject json = new JSONObject(msg.getContent());
                         String idResquest = json.getString("idRequete");
                         System.err.println("LECTURE");
@@ -42,6 +45,7 @@ public class ConsultationAgent extends Agent {
                         System.err.println("AGENT LISTEN CONSULTATION CRASH");
                         System.out.println(msg.getContent());
                         e.printStackTrace();
+                        System.exit(1);
                     }
 
                     ACLMessage reply = msg.createReply();

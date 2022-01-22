@@ -1,6 +1,13 @@
 package fr.ul.miage.ai_airline.agent;
 
 import fr.ul.miage.ai_airline.Main;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.core.Runtime;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -37,6 +44,37 @@ public class Starter {
             loadConfiguration();
         }
 
-        //TODO
+        Runtime runtime = Runtime.instance();
+        // Configuration du conteneur des agents de la compagnie aérienne
+        Profile profile = new ProfileImpl();
+        profile.setParameter(Profile.MAIN_HOST, (String) configuration.get("main_host"));          // localhost
+        profile.setParameter(Profile.GUI, (String) configuration.get("gui"));                      // -gui
+        profile.setParameter(Profile.LOCAL_PORT, (String) configuration.get("local_port"));        // -port
+        profile.setParameter(Profile.CONTAINER_NAME, (String) configuration.get("container_name"));// -name
+        ContainerController containerController = runtime.createMainContainer(profile);
+
+        // Liste des agents a démarrer
+        AgentController agentFakeReservationController;                         // agent de demandes de consultations
+        AgentController agentFakeConsultationController;                        // agent de demandes de réservations
+        AgentController agentReservationController;                             // agent écoutant les réservations
+        AgentController agentConsultationController;                            // agent écoutant les consultations
+        try {
+            // Réservations
+            agentFakeReservationController = containerController.createNewAgent("fake_agent_reservation", "fr.ul.miage.ai_airline.agent.FakeReservationRequestAgent", null);
+            agentFakeReservationController.start();
+            agentReservationController = containerController.createNewAgent("agent_reservation", "fr.ul.miage.ai_airline.agent.ReservationAgent", null);
+            agentReservationController.start();
+            // Consultations
+            agentFakeConsultationController = containerController.createNewAgent("fake_agent_consultation", "fr.ul.miage.ai_airline.agent.FakeConsultationRequestAgent", null);
+            agentFakeConsultationController.start();
+            agentConsultationController = containerController.createNewAgent("agent_consultation", "fr.ul.miage.ai_airline.agent.ConsultationAgent", null);
+            agentConsultationController.start();
+        } catch (StaleProxyException e) {
+            System.err.println("Erreur lors du démarrage des agents");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
-}
+
+    }
+
