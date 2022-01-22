@@ -15,14 +15,14 @@ public class MainTest {
     public static void main(String[] args) {
         //Construction de l'état de base de la
         //compagnie aérienne.
-        ORM.getInstance().removeAll(Plane.class);
-        Builder.build();
-        ORM.getInstance().findAll(Plane.class).forEach(entity -> {
-            var plane = (Plane) entity;
-            System.out.println(plane);
-            System.out.println(ORM.getInstance().findOne(plane.getPlaneTypeId(), PlaneType.class));
-        });
-        System.out.println(ORM.getInstance().findNative("SELECT SUM(PT.sale_price) FROM PLANE P INNER JOIN PLANE_TYPE PT ON P.PLANE_TYPE_ID = PT.ID"));
+       // ORM.getInstance().removeAll(Plane.class);
+       // Builder.build();
+       // ORM.getInstance().findAll(Plane.class).forEach(entity -> {
+        //    var plane = (Plane) entity;
+        //    System.out.println(plane);
+         //   System.out.println(ORM.getInstance().findOne(plane.getPlaneTypeId(), PlaneType.class));
+        //});
+        //System.out.println(ORM.getInstance().findNative("SELECT SUM(PT.sale_price) FROM PLANE P INNER JOIN PLANE_TYPE PT ON P.PLANE_TYPE_ID = PT.ID"));
         //Lancement des agents de la compagnie
         //aérienne.
 

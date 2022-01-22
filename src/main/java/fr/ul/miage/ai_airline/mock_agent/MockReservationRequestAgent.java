@@ -26,7 +26,7 @@ public class MockReservationRequestAgent extends Agent {
     protected void setup() {
         //Log de debug.
         System.out.println("[Domaine = assistant client] Initialisation d'un nouvel agent mock de requête de réservation : " +
-                getLocalName() + " aka " + getAID().getName() + ".");
+                            getLocalName() + " aka " + getAID().getName() + ".");
 
 
         addBehaviour(new TickerBehaviour(this, 3000) {
@@ -34,7 +34,7 @@ public class MockReservationRequestAgent extends Agent {
             protected void onTick() {
                 //Log de debug.
                 System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                        "Nouvelle envoi de requête de réservation.");
+                                   "Nouvelle envoi de requête de réservation.");
 
                 //Récupération des classes de vol avec des places disponibles.
                 var availaleFligthClasses = orm.findWhere("WHERE COUNT_AVAILABLE_PLACES > 0", FlightClass.class);
@@ -56,7 +56,7 @@ public class MockReservationRequestAgent extends Agent {
 
                     //Log de debug.
                     System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                            "Envoi d'une nouvelle requête:" + JSONRequest.toString());
+                                       "Envoi d'une nouvelle requête:" + JSONRequest.toString());
 
                     //Envoi de la requête.
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
@@ -66,12 +66,11 @@ public class MockReservationRequestAgent extends Agent {
                 } else {
                     //Log de debug.
                     System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                            "Aucune place disponible trouvé à demander.");
+                                       "Aucune place disponible trouvée à demander.");
                 }
 
                 block();
             }
         });
-
     }
 }

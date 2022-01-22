@@ -53,8 +53,8 @@ public class ReservationAgent extends Agent {
                         className = JSONRequest.getString("classe");
                         countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
-                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "]" +
-                                           " Problème à l'écoute d'une requête de réservation !");
+                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Problème à l'analyse d'une requête de réservation !");
                         System.err.println(request.getContent());
                         e.printStackTrace();
                     }
