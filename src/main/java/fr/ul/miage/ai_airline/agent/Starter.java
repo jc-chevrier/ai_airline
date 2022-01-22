@@ -31,7 +31,7 @@ public class Starter {
         try {
             configuration.load(Main.class.getResourceAsStream(CONFIGURATION_FILENAME));
         } catch (IOException e) {
-            System.err.println("Erreur ! Problème au cours du chargement de la configuration des agents !");
+            System.err.println("Erreur! Problème au cours du chargement de la configuration des agents !");
             e.printStackTrace();
             System.exit(1);
         }
@@ -45,43 +45,51 @@ public class Starter {
         if (configuration == null) {
             loadConfiguration();
         }
+
+        //Récupération de la configuration pour le lancement de Jade.
         String host = (String) configuration.get("main_host");
         String isGUI = (String) configuration.get("gui");
         String RMIserverPort = (String) configuration.get("local_port");
         String containerName = (String) configuration.get("container_name");
 
+        //Lancement du conteneur des agents.
         Runtime runtime = Runtime.instance();
-        // Configuration du conteneur des agents de la compagnie aérienne
         Profile profile = new ProfileImpl();
-        profile.setParameter(Profile.MAIN_HOST, host);                  // localhost
-        profile.setParameter(Profile.GUI, isGUI);                       // -gui
-        profile.setParameter(Profile.LOCAL_PORT, RMIserverPort);        // -port
-        profile.setParameter(Profile.CONTAINER_NAME, containerName);    // -name
+        profile.setParameter(Profile.MAIN_HOST, host);
+        profile.setParameter(Profile.GUI, isGUI);
+        profile.setParameter(Profile.LOCAL_PORT, RMIserverPort);
+        profile.setParameter(Profile.CONTAINER_NAME, containerName);
         ContainerController containerController = runtime.createMainContainer(profile);
 
-        // Liste des agents a démarrer
-        AgentController agentFakeReservationController;                         // agent de demandes de consultations
-        AgentController agentFakeConsultationController;                        // agent de demandes de réservations
-        AgentController agentReservationController;                             // agent écoutant les réservations
-        AgentController agentConsultationController;                            // agent écoutant les consultations
-        String mockReservationName = (String) configuration.get("mock_reservation_name");
-        String mockConsultationName = (String) configuration.get("mock_consultation_name");
-        String reservationName = (String) configuration.get("reservation_name");
-        String consultationName = (String) configuration.get("consultation_name");
+        //Récupération de la configuration pour le lancement des agsnts de Jade.
+        String mockReservationAgentName = (String) configuration.get("mock_reservation_name");
+        String mockConsultationAgentName = (String) configuration.get("mock_consultation_name");
+        String reservationAgentName = (String) configuration.get("reservation_name");
+        String consultationAgentName = (String) configuration.get("consultation_name");
 
+        //Lancement des agents.
+        AgentController mockReservationAgentController;
+        AgentController mockConsultationAgentController;
+        AgentController reservationAgentController;
+        AgentController consultationAgentController;
         try {
-            // Réservations
-            agentFakeReservationController = containerController.createNewAgent(mockReservationName, MockReservationRequestAgent.class.getName(), null);
-            agentFakeReservationController.start();
-            agentReservationController = containerController.createNewAgent(reservationName, ReservationAgent.class.getName(), null);
-            agentReservationController.start();
-            // Consultations
-            agentFakeConsultationController = containerController.createNewAgent(mockConsultationName, MockConsultationRequestAgent.class.getName(), null);
-            agentFakeConsultationController.start();
-            agentConsultationController = containerController.createNewAgent(consultationName, ConsultationAgent.class.getName(), null);
-            agentConsultationController.start();
+            //Lancement du mock de l'agent de requête de recherche de vol.
+            mockConsultationAgentController = containerController.createNewAgent(mockConsultationAgentName, MockConsultationRequestAgent.class.getName(), null);
+            mockConsultationAgentController.start();
+
+            //Lancement de l'agent de recherche de vol.
+            consultationAgentController = containerController.createNewAgent(consultationAgentName, ConsultationAgent.class.getName(), null);
+            consultationAgentController.start();
+
+            //Lancement du mock de l'agent de requête de réservation de vol.
+            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName, MockReservationRequestAgent.class.getName(), null);
+            mockReservationAgentController.start();
+
+            //Lancement de l'agent de réservation de vol.
+            reservationAgentController = containerController.createNewAgent(reservationAgentName, ReservationAgent.class.getName(), null);
+            reservationAgentController.start();
         } catch (StaleProxyException e) {
-            System.err.println("Erreur lors du démarrage des agents");
+            System.err.println("Erreur lors du démarrage des agents !");
             e.printStackTrace();
             System.exit(1);
         }

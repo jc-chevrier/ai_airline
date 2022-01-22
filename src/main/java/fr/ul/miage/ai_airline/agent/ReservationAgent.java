@@ -64,7 +64,7 @@ public class ReservationAgent extends Agent {
                     var flight = (Entity) orm.findOne(flightId, Flight.class);
                     //Si le vol existe.
                     if(flight != null) {
-                        var flightClasses = orm.findWhere("WHERE FLIGHT_ID = " + flight.getId(), Flight.class);
+                        var flightClasses = orm.findWhere("WHERE FLIGHT_ID = " + flight.getId(), FlightClass.class);
                         FlightClass flightClass = null;
                         PlaneTypeClass planeTypeClass = null;
                         for(var entity : flightClasses) {

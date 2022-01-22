@@ -61,7 +61,7 @@ public class MockReservationRequestAgent extends Agent {
                     //Envoi de la requête.
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                     request.setContent(JSONRequest.toString());
-                    request.addReceiver(new AID("", AID.ISLOCALNAME));
+                    request.addReceiver(new AID("agent_reservation", AID.ISLOCALNAME));
                     send(request);
                 } else {
                     //Log de debug.
