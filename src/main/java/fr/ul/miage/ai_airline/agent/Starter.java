@@ -74,19 +74,27 @@ public class Starter {
         AgentController consultationAgentController;
         try {
             //Lancement du mock de l'agent de requête de recherche de vol.
-            mockConsultationAgentController = containerController.createNewAgent(mockConsultationAgentName, MockConsultationRequestAgent.class.getName(), null);
+            mockConsultationAgentController = containerController.createNewAgent(mockConsultationAgentName,
+                                                                                MockConsultationRequestAgent.class.getName(),
+                                                                                null);
             mockConsultationAgentController.start();
 
             //Lancement de l'agent de recherche de vol.
-            consultationAgentController = containerController.createNewAgent(consultationAgentName, ConsultationAgent.class.getName(), null);
+            consultationAgentController = containerController.createNewAgent(consultationAgentName,
+                                                                             ConsultationAgent.class.getName(),
+                                                                             null);
             consultationAgentController.start();
 
             //Lancement du mock de l'agent de requête de réservation de vol.
-            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName, MockReservationRequestAgent.class.getName(), null);
+            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName,
+                                                                                MockReservationRequestAgent.class.getName(),
+                                                                                null);
             mockReservationAgentController.start();
 
             //Lancement de l'agent de réservation de vol.
-            reservationAgentController = containerController.createNewAgent(reservationAgentName, ReservationAgent.class.getName(), null);
+            reservationAgentController = containerController.createNewAgent(reservationAgentName,
+                                                                            ReservationAgent.class.getName(),
+                                                                            null);
             reservationAgentController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur lors du démarrage des agents !");
