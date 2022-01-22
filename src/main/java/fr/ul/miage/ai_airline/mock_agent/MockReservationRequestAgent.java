@@ -1,5 +1,6 @@
 package fr.ul.miage.ai_airline.mock_agent;
 
+import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.Flight;
 import fr.ul.miage.ai_airline.data_structure.FlightClass;
 import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
@@ -24,17 +25,25 @@ public class MockReservationRequestAgent extends Agent {
 
     @Override
     protected void setup() {
-        //Log de debug.
-        System.out.println("[Domaine = assistant client] Initialisation d'un nouvel agent mock de requête de réservation : " +
-                            getLocalName() + " aka " + getAID().getName() + ".");
+        //Récupération de la configuration globale.
+        var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
 
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Domaine = assistant client] Initialisation d'un nouvel agent mock de requête de réservation : " +
+                                getLocalName() + " aka " + getAID().getName() + ".");
+
+        }
 
         addBehaviour(new TickerBehaviour(this, 3000) {
             @Override
             protected void onTick() {
                 //Log de debug.
-                System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                   "Nouvelle envoi de requête de réservation.");
+                if(debugMode) {
+                    System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
+                                       "Nouvelle envoi de requête de réservation.");
+                }
 
                 //Récupération des classes de vol avec des places disponibles.
                 var availaleFligthClasses = orm.findWhere("WHERE COUNT_AVAILABLE_PLACES > 0", FlightClass.class);
@@ -55,18 +64,23 @@ public class MockReservationRequestAgent extends Agent {
                     JSONRequest.put("nbPlaces", 1);
 
                     //Log de debug.
-                    System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                       "Envoi d'une nouvelle requête:" + JSONRequest.toString());
+                    if(debugMode) {
+                        System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
+                                           "Envoi d'une nouvelle requête:" + JSONRequest.toString());
+                    }
 
                     //Envoi de la requête.
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                     request.setContent(JSONRequest.toString());
-                    request.addReceiver(new AID("agent_reservation", AID.ISLOCALNAME));
+                    request.addReceiver(new AID(Configuration.AGENT_CONFIGURATION.getProperty("reservation_agent_name"),
+                                                AID.ISLOCALNAME));
                     send(request);
                 } else {
                     //Log de debug.
-                    System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                       "Aucune place disponible trouvée à demander.");
+                    if(debugMode) {
+                        System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
+                                           "Aucune place disponible trouvée à demander.");
+                    }
                 }
 
                 block();

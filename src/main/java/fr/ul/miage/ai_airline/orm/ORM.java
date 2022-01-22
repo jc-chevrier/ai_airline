@@ -1,6 +1,7 @@
 package fr.ul.miage.ai_airline.orm;
 
 import fr.ul.miage.ai_airline.Main;
+import fr.ul.miage.ai_airline.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.sql.*;
@@ -28,17 +29,12 @@ import java.util.stream.Collectors;
  * @see EntityMetadata
  */
 public class ORM {
-    //Configuration de la connexion à la base de données.
-    private Properties configuration;
     //Connexion à la base de données.
     private Connection connection;
     //Singleton.
     private static ORM singletonORM;
-    //Nom du fichier de configuration.
-    public static String CONFIGURATION_FILENAME = "./configuration/database.properties";
 
     private ORM() {
-        loadConfiguration();
         connect();
     }
 
@@ -55,24 +51,10 @@ public class ORM {
     }
 
     /**
-     * Charger la configuration de la connexion
-     * à la base de données.
-     */
-    private void loadConfiguration() {
-        configuration = new Properties();
-        try {
-            configuration.load(Main.class.getResourceAsStream(CONFIGURATION_FILENAME));
-        } catch (IOException e) {
-            System.err.println("Erreur ! Problème au cours du chargement de la configuration de la base de données !");
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    /**
      * Connecter l'application à la base de données.
      */
     private void connect() {
+        var configuration = Configuration.DATABASE_CONFIGURATION;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://" +

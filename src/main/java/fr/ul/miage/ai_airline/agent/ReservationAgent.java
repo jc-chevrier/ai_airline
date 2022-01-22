@@ -1,5 +1,6 @@
 package fr.ul.miage.ai_airline.agent;
 
+import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.Flight;
 import fr.ul.miage.ai_airline.data_structure.FlightClass;
 import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
@@ -20,17 +21,25 @@ public class ReservationAgent extends Agent {
 
     @Override
     protected void setup() {
+        //Récupération de la configuration globale.
+        var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
+
         //Log de debug.
-        System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation: " +
-                            getLocalName() + " aka " + getAID().getName() + ".");
+        if(debugMode) {
+            System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation: " +
+                               getLocalName() + " aka " + getAID().getName() + ".");
+        }
 
         //Comportement d'écoute des requêtes de réservations
         addBehaviour(new TickerBehaviour(this, 1000) {
             @Override
             protected void onTick() {
                 //Log de debug.
-                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                   "Nouvelle écoute des requêtes de réservation.");
+                if(debugMode) {
+                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                        "Nouvelle écoute des requêtes de réservation.");
+                }
 
                 //Attente d'une nouvelle requête de réservation.
                 var request = receive();
@@ -38,9 +47,11 @@ public class ReservationAgent extends Agent {
                 //Nouvelle requête de réservation.
                 if (request != null) {
                     //Log de debug.
-                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                       "Nouvelle requête de réservation reçue de: " +
-                                        request.getSender().getLocalName() + ".");
+                    if(debugMode) {
+                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Nouvelle requête de réservation reçue de: " +
+                                           request.getSender().getLocalName() + ".");
+                    }
 
                     //Analyse de la requête, et extraction de ses données.
                     JSONObject JSONRequest = null;
@@ -50,8 +61,10 @@ public class ReservationAgent extends Agent {
                         //Analyse de contenu de la requête.
                         JSONRequest = new JSONObject(request.getContent());
                         //Log de debug.
-                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                            "Contenu de la requête de réservation reçue: " + JSONRequest + "!");
+                        if(debugMode) {
+                            System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                               "Contenu de la requête de réservation reçue: " + JSONRequest + "!");
+                        }
                         //Extraction des données du contenu de la requête reçue.
                         resquestId = JSONRequest.getInt("idRequete");
                         flightId = JSONRequest.getInt("idVol");
@@ -59,8 +72,10 @@ public class ReservationAgent extends Agent {
                         countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
                         //Log de debug.
-                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                           "Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
+                        if(debugMode) {
+                            System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                               "Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
+                        }
                         e.printStackTrace();
                     }
 
@@ -88,9 +103,10 @@ public class ReservationAgent extends Agent {
                                 //Sauvegarde des modifications.
                                 orm.save(flightClass);
                                 //Log de debug.
-                                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                                    "Réservation de la classe faite: " + new JSONObject(flightClass) + ".");
-
+                                if(debugMode) {
+                                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                                       "Réservation de la classe faite: " + new JSONObject(flightClass) + ".");
+                                }
                             } else {
                                 correctRequest = false;
                             }
@@ -112,8 +128,10 @@ public class ReservationAgent extends Agent {
                     }
 
                     //Log de debug.
-                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                        "Envoi d'une réponse à la requête de réservation: " + JSONResponse + ".");
+                    if(debugMode) {
+                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Envoi d'une réponse à la requête de réservation: " + JSONResponse + ".");
+                    }
 
                     //Envoi de la réponse.
                     var response = request.createReply();
