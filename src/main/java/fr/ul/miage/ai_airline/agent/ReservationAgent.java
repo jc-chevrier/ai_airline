@@ -15,6 +15,9 @@ import org.json.JSONObject;
  * Agent pour la gestion des requêtes de réservation.
  */
 public class ReservationAgent extends Agent {
+    //ORM pour l'échange avec la base de données.
+    public static ORM orm = ORM.getInstance();
+
     @Override
     protected void setup() {
         //Log de debug.
@@ -58,7 +61,6 @@ public class ReservationAgent extends Agent {
 
                     //Vérification des données de la requête.
                     var correctRequest = true;
-                    var orm = ORM.getInstance();
                     var flight = (Entity) orm.findOne(flightId, Flight.class);
                     //Si le vol existe.
                     if(flight != null) {
@@ -90,17 +92,27 @@ public class ReservationAgent extends Agent {
                         correctRequest = false;
                     }
 
-                    //Réponse à la requête.
-                    var response = request.createReply();
+                    //Création de la réponse.
                     var JSONResponse = new JSONObject();
                     JSONResponse.put("idRequete", resquestId);
                     //Si la requête était correcte.
                     if(correctRequest) {
-                        response .setPerformative(ACLMessage.CONFIRM);
                         JSONResponse.put("resultat", "Réussite");
                     } else {
-                        response .setPerformative(ACLMessage.FAILURE);
                         JSONResponse.put("resultat", "Echec");
+                    }
+
+                    //Log de debug.
+                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                        "Envoi d'une réponse:" + JSONResponse.toString());
+
+                    //Envoi de la réponse.
+                    var response = request.createReply();
+                    //Si la requête était correcte.
+                    if(correctRequest) {
+                        response .setPerformative(ACLMessage.CONFIRM);
+                    } else {
+                        response .setPerformative(ACLMessage.FAILURE);
                     }
                     response.setContent(JSONResponse.toString());
                     send(response);
