@@ -84,10 +84,21 @@ public class FlightClass extends Entity {
         set("PLANE_TYPE_CLASS_ID", planeTypeClassId);
     }
 
+    /**
+     * Savoir si un certain de places est encore
+     * disponible dans la classe.
+     *
+     * @param countAvailablePlaces
+     */
     public boolean hasCountAvailablePlaces(Integer countAvailablePlaces) {
         return countAvailablePlaces <= getCountAvailablePlaces();
     }
 
+    /**
+     * Incrémenter le nombre de places libres.
+     *
+     * @param countPlaces
+     */
     public void incrementPlaces(Integer countPlaces) {
         setCountAvailablePlaces(getCountAvailablePlaces() + countPlaces);
         setCountOccupiedPlaces(getCountOccupiedPlaces() - countPlaces);

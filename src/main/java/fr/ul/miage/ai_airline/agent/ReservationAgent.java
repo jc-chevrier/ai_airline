@@ -11,6 +11,9 @@ import jade.lang.acl.ACLMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Agent pour la gestion des requêtes de réservation.
+ */
 public class ReservationAgent extends Agent {
     @Override
     protected void setup() {
@@ -27,21 +30,21 @@ public class ReservationAgent extends Agent {
                                    "Nouvelle écoute des requêtes de réservation.");
 
                 //Attente d'une nouvelle requête de réservation.
-                var reservationRequest = receive();
+                var request = receive();
 
                 //Nouvelle requête de réservation.
-                if (reservationRequest != null) {
+                if (request != null) {
                     //Log de debug.
                     System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
                                        "Nouvelle requête de réservation reçue de : " +
-                                       reservationRequest.getSender().getLocalName());
+                                       request.getSender().getLocalName());
 
                     //Analyse de la requête, et récupération de ses données.
                     JSONObject JSONRequest = null;
                     Integer resquestId = null, flightId = null,  countAskedPlaces = null;
                     String className = null;
                     try {
-                        JSONRequest = new JSONObject(reservationRequest.getContent());
+                        JSONRequest = new JSONObject(request.getContent());
                         resquestId = JSONRequest.getInt("idRequete");
                         flightId = JSONRequest.getInt("idVol");
                         className = JSONRequest.getString("classe");
@@ -49,7 +52,7 @@ public class ReservationAgent extends Agent {
                     } catch (JSONException e) {
                         System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "]" +
                                            " Problème à l'écoute d'une requête de réservation !");
-                        System.err.println(reservationRequest.getContent());
+                        System.err.println(request.getContent());
                         e.printStackTrace();
                     }
 
@@ -88,11 +91,9 @@ public class ReservationAgent extends Agent {
                     }
 
                     //Réponse à la requête.
-                    var response = reservationRequest.createReply();
+                    var response = request.createReply();
                     var JSONResponse = new JSONObject();
                     JSONResponse.put("idRequete", resquestId);
-
-                    //Objet JSON de réponse.
                     //Si la requête était correcte.
                     if(correctRequest) {
                         response .setPerformative(ACLMessage.CONFIRM);
