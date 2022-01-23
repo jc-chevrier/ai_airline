@@ -35,7 +35,7 @@ public class SearchAgent extends Agent {
         //Log de debug.
         if (debugMode) {
             System.out.println("[Compagnie aérienne] Initialisation d'un nouvel agent de recherche: " +
-                    getLocalName() + " aka " + getAID().getName() + ".");
+                               getLocalName() + " aka " + getAID().getName() + ".");
         }
 
         //Comportement d'écoute et de gestion des
@@ -46,7 +46,7 @@ public class SearchAgent extends Agent {
                 //Log de debug.
                 if (debugMode) {
                     System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                            "Nouvelle écoute des requêtes de recherche.");
+                                       "Nouvelle écoute des requêtes de recherche.");
                 }
 
                 //Attente d'une nouvelle requête de recherche.
@@ -58,8 +58,8 @@ public class SearchAgent extends Agent {
                     //Log de debug.
                     if (debugMode) {
                         System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                "Nouvelle requête de recherche reçue de: " +
-                                request.getSender().getLocalName() + ".");
+                                           "Nouvelle requête de recherche reçue de: " +
+                                           request.getSender().getLocalName() + ".");
                     }
 
                     //Analyse de la requête et extraction de ses données.
@@ -74,7 +74,7 @@ public class SearchAgent extends Agent {
                         //Log de debug.
                         if (debugMode) {
                             System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                    "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
+                                               "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
                         }
                         //Extraction des données du contenu de la requête reçue.
                         startDate = DateConverter.stringToDate(JSONRequest.getString("dateDepart"));
@@ -85,8 +85,8 @@ public class SearchAgent extends Agent {
                         className = JSONRequest.getString("classe");
                     } catch (JSONException e) {
                         System.err.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                "Erreur! Problème à l'analyse d'une requête de recherche : " +
-                                request.getContent() + "!");
+                                           "Erreur! Problème à l'analyse d'une requête de recherche : " +
+                                            request.getContent() + "!");
                         e.printStackTrace();
                         System.exit(1);
                     }
@@ -190,7 +190,7 @@ public class SearchAgent extends Agent {
                     //Log de debug.
                     if (debugMode) {
                         System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
+                                           "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
                     }
 
                     //Envoi de la réponse.
