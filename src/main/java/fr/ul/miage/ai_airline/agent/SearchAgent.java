@@ -121,7 +121,7 @@ public class SearchAgent extends Agent {
                             if(debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                                    "Nombre de vols filtrés trouvés : " +
-                                                    new JSONObject(flights) + ".");
+                                                    new JSONArray(flights) + ".");
                             }
                             //Création d'une vue des vols trouvés.
                             for(var entity : flights) {
