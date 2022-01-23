@@ -26,7 +26,10 @@ public class Builder {
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
-        //Etape 1 : nettoyage des tables (reset sequence & remove all).
+        //Rcéupération du contexte global.
+        Global global = (Global) orm.findOne(1, Global.class);
+        
+        //Etape 1 : nettoyage des tables.
         //Log de debug.
         if(debugMode) {
             System.out.println("[Compagnie aérienne][Jeu de données] Nettoyage des vols et avions.");
@@ -42,7 +45,7 @@ public class Builder {
             System.out.println("[Compagnie aérienne][Jeu de données] Génération des avions.");
         }
         //Génération.
-        var poolMoneyInitialization = 10000000;
+        var poolMoneyInitialization = global.getBalanceInitialization();
         var continueToCreateAvion = true;
         while(continueToCreateAvion) {
             //Choix aléatoire d'un identifiant de type d'avion.//TODO à rediscuter.
@@ -171,11 +174,19 @@ public class Builder {
             }
         }
 
-        //Sauvegarde des données globales compagnie.
-        //TODO à voir si c'est nécessaire.
+        //Etape 4 : mise à jour du contexte global.
         //Log de debug.
         if(debugMode) {
-            System.out.println("[Compagnie aérienne][Jeu de données] Mise à jour des constantes.");
+            System.out.println("[Compagnie aérienne][Jeu de données] Mise à jour du contexte global.");
         }
+        //Modification.
+        var costInitialization = (Double) orm.findNative("SELECT SUM(PT.sale_price) AS COST_INITIALIZATION " +
+                                                         "FROM PLANE P " +
+                                                         "INNER JOIN PLANE_TYPE PT " +
+                                                         "ON P.PLANE_TYPE_ID = PT.ID")
+                                             .get(0)
+                                             .get("COST_INITIALIZATION");
+        global.incrementBalance(-costInitialization);
+        orm.save(global);
     }
 }

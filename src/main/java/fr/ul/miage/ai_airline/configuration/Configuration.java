@@ -7,7 +7,7 @@ import java.util.Properties;
 
 /**
  * Classe de la configuration de la
- * compagnie aérienne.
+ * solution.
  */
 public class Configuration {
     //Chemin du fichier de la configuration globale.
