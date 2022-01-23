@@ -25,7 +25,7 @@ public class DateConverter {
      * @return
      */
     public static String dateToString(@NotNull Date date) {
-        return dateTimeFormatter.format(new Date().toInstant());
+        return dateTimeFormatter.format(date.toInstant());
     }
 
     /**
