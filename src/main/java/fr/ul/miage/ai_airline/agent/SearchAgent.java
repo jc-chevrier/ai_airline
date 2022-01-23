@@ -170,10 +170,13 @@ public class SearchAgent extends Agent {
                         correctRequest = false;
                     }
 
-                    //Calcul des scores de recommandation.
-                    setScore(JSONArrayFlights, startDate);
-                    //Tri des résultats en fonction des scores de recommandation.
-                    JSONArrayFlights = sortByScore(JSONArrayFlights);
+                    //Si des vols ont été trouvés.
+                    if(!JSONArrayFlights.isEmpty()) {
+                        //Calcul des scores de recommandation.
+                        setScore(JSONArrayFlights, startDate);
+                        //Tri des résultats en fonction des scores de recommandation.
+                        JSONArrayFlights = sortByScore(JSONArrayFlights);
+                    }
 
                     //Création de la réponse.
                     var JSONResponse = new JSONObject();
