@@ -6,7 +6,6 @@ import fr.ul.miage.ai_airline.orm.ORM;
 import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;

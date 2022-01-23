@@ -8,7 +8,6 @@ import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import org.json.JSONObject;
 import java.util.Date;
