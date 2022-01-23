@@ -2,7 +2,6 @@ package fr.ul.miage.ai_airline.agent;
 
 import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.*;
-import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
 import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.Agent;
@@ -110,12 +109,12 @@ public class SearchAgent extends Agent {
                                                         startDate.toInstant().getEpochSecond() + " " +
                                                         "AND FROM_TABLE.ID IN " +
                                                             "(SELECT FC2.FLIGHT_ID " +
-                                                            "FROM FLIGHT_CLASS FC2 " +
+                                                            "FROM FLIGHT_CLASS AS FC2 " +
                                                             "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
                                                             "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
                                                             "WHERE PTC.NAME = '" + className + "' " +
                                                             "AND FC2.COUNT_AVAILABLE_PLACES > 0)",
-                                    Flight.class);
+                                                       Flight.class);
                             //Log de debug.
                             if(debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
@@ -143,7 +142,7 @@ public class SearchAgent extends Agent {
                                 var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
                                                                   "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
                                                                   "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
-                                                                  "AND PTC.NAME = '" + className + "')",
+                                                                  "AND PTC.NAME = '" + className + "'",
                                         FlightClass.class);
                                 //Création des vues des classes du voltrouvées.
                                 for (var entity2 : flightClasses) {

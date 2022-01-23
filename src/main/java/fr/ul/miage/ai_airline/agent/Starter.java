@@ -1,17 +1,14 @@
 package fr.ul.miage.ai_airline.agent;
 
-import fr.ul.miage.ai_airline.Main;
 import fr.ul.miage.ai_airline.configuration.Configuration;
-import fr.ul.miage.ai_airline.mock_agent.MockSearchRequestAgent;
 import fr.ul.miage.ai_airline.mock_agent.MockReservationRequestAgent;
+import fr.ul.miage.ai_airline.mock_agent.MockSearchRequestAgent;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Lanceur pour le lancement
@@ -57,24 +54,21 @@ public class Starter {
                                                                            MockSearchRequestAgent.class.getName(),
                                                                            null);
             mockSearchAgentController.start();
-
             //Lancement de l'agent de recherche de vol.
             searchAgentController = containerController.createNewAgent(searchAgentName,
                                                                        SearchAgent.class.getName(),
                                                                        null);
             searchAgentController.start();
-
             //Lancement du mock de l'agent de requête de réservation de vol.
-            /*mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName,
+            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName,
                                                                                 MockReservationRequestAgent.class.getName(),
                                                                                 null);
             mockReservationAgentController.start();
-
             //Lancement de l'agent de réservation de vol.
             reservationAgentController = containerController.createNewAgent(reservationAgentName,
                                                                             ReservationAgent.class.getName(),
                                                                             null);
-            reservationAgentController.start();*/
+            reservationAgentController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur! Problème au cours du démarrage des agents!");
             e.printStackTrace();
