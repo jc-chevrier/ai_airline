@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -100,24 +102,26 @@ public class SearchAgent extends Agent {
                         var arrivalCity = (City) orm.findOneWhere("WHERE NAME = '" + arrivalCityName + "'", City.class);
                         //Si la ville d'arrivée existe.
                         if (arrivalCity != null) {
+                            var formatOnlyDate = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                                                                   .withZone(ZoneId.of(Configuration.GLOBAl_CONFIGURATION.getProperty("timezone")));
                             //Récupération des vols correspondant aux filtres.
-                            var flights = orm.findWhere("INNER JOIN FLIGHT_CLASS AS FC " +
-                                            "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
-                                            "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
-                                            arrivalCity.getId() + " " +
-                                            "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
-                                            "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
-                                            "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
-                                            startDate.toInstant().getEpochSecond() + " " +
-                                            "AND FROM_TABLE.ID IN " +
-                                            "(SELECT FC2.FLIGHT_ID " +
-                                            "FROM FLIGHT_CLASS AS FC2 " +
-                                            "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                            "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
-                                            "WHERE PTC.NAME = '" + className + "' " +
-                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0) " +
-                                            "ORDER BY FROM_TABLE.START_DATE",
-                                    Flight.class);
+                            var flights = orm.findWhere("WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
+                                                        arrivalCity.getId() + " " +
+                                                        "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
+                                                        startDate.toInstant().getEpochSecond() + " " +
+                                                        "AND TO_CHAR(FROM_TABLE.START_DATE, 'YYYY-MM-DD') = '" +
+                                                        formatOnlyDate.format(startDate.toInstant()) + "' " +
+                                                        "AND FROM_TABLE.ID IN " +
+                                                            "(SELECT FC.FLIGHT_ID " +
+                                                            "FROM FLIGHT_CLASS AS FC " +
+                                                            "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                                            "ON PTC.ID = FC.PLANE_TYPE_CLASS_ID " +
+                                                            "WHERE PTC.NAME = '" + className + "' " +
+                                                            "AND FC.COUNT_AVAILABLE_PLACES > 0 " +
+                                                            "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
+                                                            "AND FC.PLACE_PRICE <= " + upperPriceLimit + ") " +
+                                                            "ORDER BY FROM_TABLE.START_DATE",
+                                                        Flight.class);
                             //Log de debug.
                             if (debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
@@ -144,9 +148,9 @@ public class SearchAgent extends Agent {
                                 JSONFlight.put("classes", JSONArrayFlightClasses);
                                 //Récupération des classes du vol.
                                 var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                                "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
-                                                "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
-                                                "AND PTC.NAME = '" + className + "'",
+                                                                  "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
+                                                                  "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
+                                                                  "AND PTC.NAME = '" + className + "'",
                                         FlightClass.class);
                                 //Création des vues des classes du voltrouvées.
                                 for (var entity2 : flightClasses) {
@@ -199,7 +203,6 @@ public class SearchAgent extends Agent {
                     }
                     response.setContent(JSONResponse.toString());
                     send(response);
-                    System.exit(1);
                 }
                 block();
             }
