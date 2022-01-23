@@ -4,9 +4,7 @@ import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.*;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
-
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 
@@ -28,7 +26,7 @@ public class Builder {
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
-        //Rcéupération du contexte global.
+        //Récupération du contexte global.
         Global global = (Global) orm.findOne(1, Global.class);
         
         //Etape 1 : nettoyage des tables.
