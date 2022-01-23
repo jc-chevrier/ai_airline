@@ -3,6 +3,7 @@ package fr.ul.miage.ai_airline.agent;
 import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.Flight;
 import fr.ul.miage.ai_airline.data_structure.FlightClass;
+import fr.ul.miage.ai_airline.data_structure.Global;
 import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
@@ -27,6 +28,9 @@ public class ReservationAgent extends Agent {
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
+
+        //Récupération du contexte global.
+        Global global = (Global) orm.findOne(1, Global.class);
 
         //Log de debug.
         if(debugMode) {
@@ -107,12 +111,16 @@ public class ReservationAgent extends Agent {
                                 //Modification des nombres de places
                                 //disponibles et occupées.
                                 flightClass.incrementPlaces(-countAskedPlaces);
+                                //Augmentation du solde de la compagnie avec le gain.
+                                global.incrementBalance(flightClass.getPlacePrice() * countAskedPlaces);
                                 //Sauvegarde des modifications.
                                 orm.save(flightClass);
+                                orm.save(global);
                                 //Log de debug.
                                 if(debugMode) {
                                     System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                                       "Réservation de places d'une classe faite: " + new JSONObject(flightClass) + ".");
+                                                       "Réservation de places d'une classe faite: " + new JSONObject(flightClass) +
+                                                       " " + new JSONObject(global) + ".");
                                 }
                             } else {
                                 correctRequest = false;

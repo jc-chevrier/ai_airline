@@ -1,9 +1,9 @@
 #!/bin/bash
 
-resourcesFolder="./src/main/resources/fr/ul/miage/ai_airline"
+resourcesFolder="../src/main/resources/fr/ul/miage/ai_airline"
 configurationFile="${resourcesFolder}/configuration/database.properties"
 
-SQLFolder="./src/main/sql/fr/ul/miage/ai_airline"
+SQLFolder="../src/main/sql/fr/ul/miage/ai_airline"
 databaseInitializerScript="${SQLFolder}/initialization/database_initializer.sql"
 tablesInitializerScript="${SQLFolder}/initialization/tables_initializer.sql"
 tablesBuilderScript="${SQLFolder}/initialization/tables_builder.sql"
