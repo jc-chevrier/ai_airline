@@ -50,7 +50,7 @@ public class Builder {
         var poolMoneyInitialization = global.getBalanceInitialization();
         var continueToCreateAvion = true;
         while(continueToCreateAvion) {
-            //Choix aléatoire d'un identifiant de type d'avion.//TODO à rediscuter.
+            //Choix aléatoire d'un identifiant de type d'avion.
             Integer randomPlaneTypeId;
             //Tant que l'identifiant vaut 0.
             do {
@@ -84,17 +84,9 @@ public class Builder {
         var planes = orm.findAll(Plane.class);
         var startCityParis = orm.findOne(1, City.class);
         var citysWithoutParis = orm.findWhere("WHERE ID != 1", City.class);
-        var startDate = Date.from(Instant.parse("2022-01-27T23:00:00.00Z"));//Décalage d'une heure car UTC + 1.//TODO à rediscuter.
-        var endDate = Date.from(Instant.parse("2022-01-30T22:59:00.00Z"));//TODO à rediscuter.
-        var fuelCostEuroPerL = 0.4;
-        var consommationFuelCostLPerKm = 8.39;
-        var taxePassengerEuro = 18;
-        var maintenanceCost = 1070;
-        var rateFirstClass = 0.5;
-        var rateEconomicClass = 0.3;
-        var rateBusinessClass = 0.2;
+        var startDate = (Date) global.getStartDate().clone();
         //Tant que date de fin de période des vols pas atteinte.
-        while(startDate.before(endDate)) {
+        while(startDate.before(global.getEndDate())) {
             //Choix de la ville d'arrivée.
             //Mélange des villes pour ne pas en favoriser.
             Collections.shuffle(citysWithoutParis);
@@ -139,8 +131,8 @@ public class Builder {
                 var flight = new Flight();
                 flight.setStartDate(startDate);
                 flight.setArrivalDate(arrivalDate);
-                flight.setFloorPrice((arrivalCity.getDistanceToParis() * consommationFuelCostLPerKm * fuelCostEuroPerL) +
-                                     (planeType.getCountTotalPlaces() * taxePassengerEuro));
+                flight.setFloorPrice((arrivalCity.getDistanceToParis() * global.getConsommationFuelCost() * global.getFuelCost()) +
+                                     (planeType.getCountTotalPlaces() * global.getPassengerTax()));
                 flight.setStartCityId(startCityParis.getId());
                 flight.setArrivalCityId(arrivalCity.getId());
                 flight.setPlaneId(plane.getId());
@@ -156,9 +148,9 @@ public class Builder {
                     if(isCargo) {
                         floorPlacePrice = floorPricePerPlace;
                         switch (planeTypeClass.getName()) {
-                            case PlaneTypeClass.FIRST -> floorPricePerPlace *= rateFirstClass;
-                            case PlaneTypeClass.BUSINESS -> floorPricePerPlace *= rateBusinessClass;
-                            case PlaneTypeClass.ECONOMIC -> floorPricePerPlace *= rateEconomicClass;
+                            case PlaneTypeClass.FIRST -> floorPricePerPlace *= global.getFirstClassRate();
+                            case PlaneTypeClass.BUSINESS -> floorPricePerPlace *= global.getBusinessClassRate();
+                            case PlaneTypeClass.ECONOMIC -> floorPricePerPlace *= global.getEconomicClassRate();
                         }
                     } else {
                         floorPlacePrice = floorPricePerPlace;
@@ -166,7 +158,8 @@ public class Builder {
                     //Création et insertion d'une classe du vol.
                     var flightClass = new FlightClass();
                     flightClass.setFloorPlacePrice(floorPlacePrice);
-                    flightClass.setPlacePrice(flightClass.getFloorPlacePrice() + flightClass.getFloorPlacePrice() * 0.1);//TODO à rediscuter.
+                    flightClass.setPlacePrice(flightClass.getFloorPlacePrice() +
+                                              flightClass.getFloorPlacePrice() * global.getPlacePriceFactor());
                     flightClass.setCountAvailablePlaces(planeTypeClass.getCountTotalPlaces());
                     flightClass.setCountOccupiedPlaces(0);
                     flightClass.setFlightId(flight.getId());
