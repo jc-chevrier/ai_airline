@@ -209,7 +209,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * TODO commentaire
+     * TODO commentaire.
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @param requestedDate La date de départ demandée par l'utilisateur
@@ -259,7 +259,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * TODO commentaire
+     * TODO commentaire.
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @return Le tableau trié par score de recommandation
