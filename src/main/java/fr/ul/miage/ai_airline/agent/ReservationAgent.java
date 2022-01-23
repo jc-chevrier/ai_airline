@@ -119,8 +119,8 @@ public class ReservationAgent extends Agent {
                                 //Log de debug.
                                 if(debugMode) {
                                     System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                                       "Réservation de places d'une classe faite: " + new JSONObject(flightClass)
-                                                        + " " + new JSONObject(global) + ".");
+                                                       "Réservation de places d'une classe faite: " + new JSONObject(flightClass) +
+                                                       " " + new JSONObject(global) + ".");
                                 }
                             } else {
                                 correctRequest = false;

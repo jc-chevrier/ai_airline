@@ -1,6 +1,6 @@
 #!/bin/bash
 
-resourcesFolder="./src/main/resources/fr/ul/miage/ai_airline"
+resourcesFolder="../src/main/resources/fr/ul/miage/ai_airline"
 configurationFile="${resourcesFolder}/configuration/database.properties"
 
 while IFS='=' read -r key value
