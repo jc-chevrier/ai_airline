@@ -7,6 +7,7 @@ import fr.ul.miage.ai_airline.orm.ORM;
 import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import org.json.JSONObject;
@@ -42,10 +43,11 @@ public class MockReservationRequestAgent extends Agent {
 
         }
 
-        //Définition du comportement.
-        addBehaviour(new TickerBehaviour(this, 3000) {
+        //Comportement d'envoi des requêtes de
+        //réservation.
+        addBehaviour(new CyclicBehaviour() {
             @Override
-            protected void onTick() {
+            public void action() {
                 //Log de debug.
                 if(debugMode) {
                     System.out.println("[Assistant client][" + getLocalName() + "] Nouvelle envoi de requête de réservation.");
@@ -71,8 +73,8 @@ public class MockReservationRequestAgent extends Agent {
 
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Assistant client][" + getLocalName() + "] Envoi d'une nouvelle requête:" +
-                                           JSONRequest.toString());
+                        System.out.println("[Assistant client][" + getLocalName() + "] " +
+                                           "Envoi d'une nouvelle requête de réservation :" + JSONRequest);
                     }
 
                     //Envoi de la requête.

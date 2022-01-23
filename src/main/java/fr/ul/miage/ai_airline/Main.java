@@ -4,11 +4,11 @@ import fr.ul.miage.ai_airline.agent.Starter;
 import fr.ul.miage.ai_airline.dataset.Builder;
 
 /**
- * Classe principale du projet.
+ * Classe principale de la solution.
  */
 public class Main {
     /**
-     * Lancer l'application.
+     * Lancer la solution.
      */
     public static void main(String[] args) {
         //Construction de l'état de base de la

@@ -7,6 +7,7 @@ import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -34,10 +35,11 @@ public class ReservationAgent extends Agent {
                                getLocalName() + " aka " + getAID().getName() + ".");
         }
 
-        //Comportement d'écoute des requêtes de réservations
-        addBehaviour(new TickerBehaviour(this, 1000) {
+        //Comportement d'écoute et de gestion
+        //des requêtes de réservation.
+        addBehaviour(new CyclicBehaviour() {
             @Override
-            protected void onTick() {
+            public void action() {
                 //Log de debug.
                 if(debugMode) {
                     System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
