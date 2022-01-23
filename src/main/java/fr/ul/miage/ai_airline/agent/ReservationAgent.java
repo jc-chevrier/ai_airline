@@ -9,6 +9,7 @@ import fr.ul.miage.ai_airline.orm.ORM;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,11 +40,12 @@ public class ReservationAgent extends Agent {
                 //Log de debug.
                 if(debugMode) {
                     System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                        "Nouvelle écoute des requêtes de réservation.");
+                                       "Nouvelle écoute des requêtes de réservation.");
                 }
 
                 //Attente d'une nouvelle requête de réservation.
-                var request = receive();
+                var messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+                var request = receive(messageTemplate);
 
                 //Nouvelle requête de réservation.
                 if (request != null) {
@@ -54,9 +56,9 @@ public class ReservationAgent extends Agent {
                                            request.getSender().getLocalName() + ".");
                     }
 
-                    //Analyse de la requête, et extraction de ses données.
+                    //Analyse de la requête et extraction de ses données.
                     JSONObject JSONRequest = null;
-                    Integer resquestId = null, flightId = null,  countAskedPlaces = null;
+                    Integer requestId = null, flightId = null,  countAskedPlaces = null;
                     String className = null;
                     try {
                         //Analyse de contenu de la requête.
@@ -67,20 +69,20 @@ public class ReservationAgent extends Agent {
                                                "Contenu de la requête de réservation reçue: " + JSONRequest + "!");
                         }
                         //Extraction des données du contenu de la requête reçue.
-                        resquestId = JSONRequest.getInt("idRequete");
+                        requestId = JSONRequest.getInt("idRequete");
                         flightId = JSONRequest.getInt("idVol");
                         className = JSONRequest.getString("classe");
                         countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
-                        //Log de debug.
-                        if(debugMode) {
-                            System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                               "Erreur! Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
-                        }
+                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Erreur! Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
                         e.printStackTrace();
+                        System.exit(1);
                     }
 
-                    //Vérification des données de la requête.
+                    //Vérification des données de la requête
+                    //et exécution de la requête si vérification
+                    //réussie.
                     var correctRequest = true;
                     var flight = (Entity) orm.findOne(flightId, Flight.class);
                     //Si le vol existe.
@@ -97,9 +99,11 @@ public class ReservationAgent extends Agent {
                         }
                         //Si la classe existe pour le vol.
                         if(planeTypeClass.getName().equals(className)) {
-                            //Si le nombre de places demandé est disponible.
+                            //Si le nombre de places demandé est
+                            //disponible.
                             if(flightClass.hasCountAvailablePlaces(countAskedPlaces)) {
-                                //Modification des nombres de places disponibles et occupées.
+                                //Modification des nombres de places
+                                //disponibles et occupées.
                                 flightClass.incrementPlaces(-countAskedPlaces);
                                 //Sauvegarde des modifications.
                                 orm.save(flightClass);
@@ -120,7 +124,7 @@ public class ReservationAgent extends Agent {
 
                     //Création de la réponse.
                     var JSONResponse = new JSONObject();
-                    JSONResponse.put("idRequete", resquestId);
+                    JSONResponse.put("idRequete", requestId);
                     //Si la requête était correcte.
                     if(correctRequest) {
                         JSONResponse.put("resultat", "Réussite");

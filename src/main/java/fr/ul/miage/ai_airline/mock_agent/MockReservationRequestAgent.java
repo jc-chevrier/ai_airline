@@ -1,11 +1,10 @@
 package fr.ul.miage.ai_airline.mock_agent;
 
 import fr.ul.miage.ai_airline.configuration.Configuration;
-import fr.ul.miage.ai_airline.data_structure.Flight;
 import fr.ul.miage.ai_airline.data_structure.FlightClass;
 import fr.ul.miage.ai_airline.data_structure.PlaneTypeClass;
 import fr.ul.miage.ai_airline.orm.ORM;
-import fr.ul.miage.ai_airline.tool.DateFormatter;
+import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
@@ -37,6 +36,7 @@ public class MockReservationRequestAgent extends Agent {
 
         }
 
+        //Définition du comportement.
         addBehaviour(new TickerBehaviour(this, 3000) {
             @Override
             protected void onTick() {
@@ -59,7 +59,7 @@ public class MockReservationRequestAgent extends Agent {
                     JSONObject JSONRequest = new JSONObject();
                     JSONRequest.put("idRequete", REQUEST_ID);
                     REQUEST_ID++;
-                    JSONRequest.put("dateDemande", DateFormatter.formatAtISO8601(new Date()));
+                    JSONRequest.put("dateDemande", DateConverter.dateToString(new Date()));
                     JSONRequest.put("idVol", fligthClass.getFlightId());
                     JSONRequest.put("classe", planeTypeClass.getName());
                     JSONRequest.put("nbPlaces", 1);

@@ -1,8 +1,10 @@
 package fr.ul.miage.ai_airline.agent;
 
+import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.*;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
+import fr.ul.miage.ai_airline.tool.DateConverter;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -21,155 +23,168 @@ import java.util.List;
  * de recherche de vol.
  */
 public class SearchAgent extends Agent {
+    //ORM pour l'échange avec la base de données.
+    private static ORM orm = ORM.getInstance();
+
     @Override
     protected void setup() {
-        System.out.println("Je suis l'agent de la compagnie aérienne qui écoute les requêtes de consultation : " +
-                getLocalName() + " appelé aussi " + getAID().getName());
+        //Récupération de la configuration globale.
+        var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
 
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de recherche: " +
+                                 getLocalName() + " aka " + getAID().getName() + ".");
+        }
 
+        //Définition du comportement.
         addBehaviour(new TickerBehaviour(this, 1000) {
             @Override
             protected void onTick() {
-                System.out.println("Tick listening consultation");
+                //Log de debug.
+                if(debugMode) {
+                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                       "Nouvelle écoute des requêtes de recherche.");
+                }
 
-                // Wait for incoming message of fipa-type ACLMessage.REQUEST
-                MessageTemplate onlyREQUEST = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
-                ACLMessage msg = receive(onlyREQUEST);
-                if (msg != null) {
-                    ACLMessage reply = msg.createReply();
-                    System.out.println("Listention consultation agent === Message received from " + msg.getSender().getLocalName());
-//                  System.out.println("Internal agent === Message content is : " + getLocalName() + " <- " + msg.getContent());
+                //Attente d'une nouvelle requête de recherche.
+                var messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+                var request = receive(messageTemplate);
+
+                //Nouvelle requête de recherche.
+                if (request != null) {
+                    //Log de debug.
+                    if(debugMode) {
+                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Nouvelle requête de recherche reçue de: " +
+                                           request.getSender().getLocalName() + ".");
+                    }
+
+                    //Analyse de la requête et extraction de ses données.
+                    JSONObject JSONRequest = null;
+                    Integer requestId = null;
+                    Date startDate = null;
+                    Double upperPriceLimit = null, lowerPriceLimit = null;
+                    String arrivalCityName = null, className = null;
                     try {
-                        System.out.println("----------- BEGIN ----------------");
-                        System.out.println(msg.getContent());
-                        System.out.println("----------- END ----------------");
-                        JSONObject json = new JSONObject(msg.getContent());
-                        String takeoffDate = json.getString("dateDepart");
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.systemDefault());
-                        // string : dateTime.format(formatter)  == 2022-01-28 11:30
-                        // datetime == 2022-01-28T11:30
-                        LocalDateTime takeoffTime = LocalDateTime.parse(takeoffDate, formatter);
-                        String idResquest = json.getString("idRequete");
-                        Double upperLimit = json.getDouble("prixHaut");
-                        Double lowerLimit = json.getDouble("prixBas");
-                        String destination = json.getString("destination");
-                        String classe = json.getString("classe");
-
-
-                        List<Entity> cities = ORM.getInstance().findWhere("WHERE name = '"+ destination +"'", City.class);
-                        // Si ville non trouvée
-                        if(cities.size() == 0){
-                            reply.setPerformative(ACLMessage.UNKNOWN);
-                            reply.setContent("You provided a unknown city name : " + destination);
-                            send(reply);
+                        //Analyse de contenu de la requête.
+                        JSONRequest = new JSONObject(request.getContent());
+                        //Log de debug.
+                        if(debugMode) {
+                            System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                               "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
                         }
-                        int cityId = cities.get(0).getId();
-                        System.out.println("Vols pour "+destination);
-                        System.out.println("Vols pour "+cityId);
-                        List<Entity> flights = ORM.getInstance().findWhere("WHERE arrival_city_id=" + cityId, Flight.class);
-                        ORM.getInstance().findWhere("WHERE arrival_city_id=" + cityId, Flight.class).forEach(System.out::println);
-                        System.out.println("Nombre de vols trouvés : "+flights.size());
-
-
-                        // vols le 28 pour barcelone :  5 10 15 19 24
-                        // vols le 30 pour barcelone : 53 60
-                        JSONObject flightsAvaliable = new JSONObject();
-                        flightsAvaliable.put("idRequete",idResquest);
-                        flightsAvaliable.put("vols",new JSONArray());
-                        JSONArray flightArray = flightsAvaliable.getJSONArray("vols");
-                        ORM.getInstance().findWhere("WHERE arrival_city_id=" + cityId, Flight.class)
-                                .forEach(
-                                        entity -> {
-                                            var flight = (Flight) entity;
-                                            int flightId = flight.getId();
-                                            Date takingoffDate = flight.getStartDate();
-                                            String takingoff = formatter.format(takingoffDate.toInstant());
-                                            Date landingDate = flight.getStartDate();
-                                            String landing = formatter.format(landingDate.toInstant());
-                                            int planeId = flight.getPlaneId();
-                                            var plane = (Plane) ORM.getInstance().findOneWhere("WHERE id=" + planeId, Plane.class);
-                                            var planeType = (PlaneType) ORM.getInstance().findOneWhere("WHERE id=" + plane.getPlaneTypeId(), PlaneType.class);
-                                            String planeTypeName = planeType.getName();
-                                            var cityFrom = (City) ORM.getInstance().findOneWhere("WHERE id=" + flight.getStartCityId(), City.class);
-                                            String cityFromString = cityFrom.getName();
-                                            var cityTo = (City) ORM.getInstance().findOneWhere("WHERE id=" + flight.getArrivalCityId(), City.class);
-                                            String cityFromTo = cityTo.getName();
-
-                                            JSONObject currentFlight = new JSONObject();
-                                            currentFlight.put("id",flightId);
-                                            currentFlight.put("villeDepart",cityFromString);
-                                            currentFlight.put("villeArrivee",cityFromTo);
-                                            currentFlight.put("dateDepart",takingoff);
-                                            currentFlight.put("dateArrivee",landing);
-                                            currentFlight.put("typeAvion",planeTypeName);
-                                            currentFlight.put("classes",new JSONArray());
-                                            JSONArray classesArray = currentFlight.getJSONArray("classes");
-
-
-                                            ORM.getInstance().findWhere("WHERE flight_id=" + flightId,  FlightClass.class)
-                                                    .forEach(
-                                                            entity2 -> {
-                                                                var flightClass = (FlightClass) entity2;
-                                                                int avalaiblePlaces = flightClass.getCountAvailablePlaces();
-                                                                Double pricePlace = flightClass.getPlacePrice();
-                                                                var planeTypeClass = (PlaneTypeClass) ORM.getInstance().findOneWhere("WHERE id=" + flightClass.getPlaneTypeClassId(), PlaneTypeClass.class);
-                                                                String className = planeTypeClass.getName();
-                                                                JSONObject currentClass = new JSONObject();
-                                                                currentClass.put("type",className);
-                                                                currentClass.put("nbPlaces",avalaiblePlaces);
-                                                                currentClass.put("prixPlace",pricePlace);
-                                                                classesArray.put(currentClass);
-                                                            }
-
-                                                    );
-                                            flightArray.put(currentFlight);
-
-                                        }
-                                        );
-
-
-                        System.out.println("###########################################################");
-                        System.out.println(flightsAvaliable.toString());
-
-
-//                        {
-//                            “idRequete”: identifiant de la requête,
-//                              “vols”:
-//                                [
-//                                        {
-//                                        “id”: identifiant_du_vol,
-//                                        “villeDepart”: ville_de_départ,
-//                                        “villeArrivee”: ville_arrivée,
-//                                        “dateDepart”: date_et_heuredépart (string),
-//                                        “dateArrivee”: date et heure d'arrivée estimé (string),
-//                                        “typeAvion”: type d'avion (exemple : Cargo 1),
-//                                        “classes” : [
-//                                                    {
-//                                                         “type”: type de la classe
-//                                                         “nbPlaces”: nombre de places disponibles,
-//                                                         “prixPlace”: prix de la place,
-//                                                    }
-//                                                    ]
-//                                        }
-//                                ]
-//                        }
-
-
-
-
+                        //Extraction des données du contenu de la requête reçue.
+                        startDate = DateConverter.stringToDate(JSONRequest.getString("dateDepart"));
+                        requestId = JSONRequest.getInt("idRequete");
+                        upperPriceLimit = JSONRequest.getDouble("prixHaut");
+                        lowerPriceLimit = JSONRequest.getDouble("prixBas");
+                        arrivalCityName = JSONRequest.getString("destination");
+                        className = JSONRequest.getString("classe");
                     } catch (JSONException e) {
-                        System.err.println("AGENT LISTEN CONSULTATION CRASH");
-                        System.err.println(msg.getContent());
+                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                           "Erreur! Problème à l'analyse d'une requête de recherche : " + request.getContent() + "!");
                         e.printStackTrace();
                         System.exit(1);
                     }
 
-                    reply.setPerformative(ACLMessage.INFORM);
-                    reply.setContent("Pong");
-                    send(reply);
-                }
-                block();
+                    //Préparation de la réponse.
+                    //Vérification des données de la requête et exécution de
+                    //la requête si vérification réussie.
+                    var correctRequest = true;
+                    var JSONArrayFlights = new JSONArray();
+                    var arrivalCity = (City) orm.findOneWhere("WHERE NAME = '" + arrivalCityName + "'", City.class);
+                    //Si la ville d'arrivée existe.
+                    if(arrivalCity != null) {
+                        //Récupération des vols correspondant aux filtres.
+                        var flights = orm.findWhere("INNER JOIN FLIGHT_CLASS AS FC " +
+                                                    "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
+                                                    "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
+                                                    arrivalCity.getId() + " " +
+                                                    "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
+                                                    "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
+                                                    "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
+                                                    startDate.toInstant().getEpochSecond() + " " +
+                                                    "AND FORM_TABLE.ID IN " +
+                                                        "(SELECT FC2.FLIGHT_ID " +
+                                                        "FROM FLIGHT_CLASS FC2 " +
+                                                        "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                                        "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
+                                                        "WHERE PTC.NAME = '" + className + "')",
+                                                    Flight.class);
+                        //Création d'une vue des vols trouvés.
+                        for(var entity : flights) {
+                            var flight = (Flight) entity;
+                            //Récupération des entités liées à un vol.
+                            var plane = (Plane) orm.findOneWhere("WHERE ID = " + flight.getPlaneId(), Plane.class);
+                            var planeType = (PlaneType) orm.findOneWhere("WHERE ID = " + plane.getPlaneTypeId(), PlaneType.class);
+                            var startCity = (City) orm.findOneWhere("WHERE ID = " + flight.getStartCityId(), City.class);
+                            //Création d'une vue d'un vol trouvé.
+                            JSONObject JSONFlight = new JSONObject();
+                            JSONFlight.put("id", flight.getId());
+                            JSONFlight.put("villeDepart", startCity.getName());
+                            JSONFlight.put("villeArrivee", arrivalCity.getName());
+                            JSONFlight.put("dateDepart", DateConverter.dateToString(flight.getStartDate()));
+                            JSONFlight.put("dateArrivee", DateConverter.dateToString(flight.getArrivalDate()));
+                            JSONFlight.put("typeAvion", planeType.getName());
+                            JSONArray JSONArrayFlightClasses = new JSONArray();
+                            JSONFlight.put("classes", JSONArrayFlightClasses);
+                            //Récupération des classes du vol.
+                            var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                                              "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
+                                                              "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
+                                                              "AND PTC.NAME = '" + className + "')",
+                                                              FlightClass.class);
+                            //Création des vues des classes du voltrouvées.
+                            for (var entity2 : flightClasses) {
+                                var flightClass = (FlightClass) entity2;
+                                //Récupération de la classe de l'avion associée.
+                                var planeTypeClass = (PlaneTypeClass) orm.findOneWhere("WHERE ID = " +
+                                                                                        flightClass.getPlaneTypeClassId(),
+                                                                                        PlaneTypeClass.class);
+                                //Création d'une vue d'une classe du vol trouvée.
+                                JSONObject JSONFlightClass = new JSONObject();
+                                JSONFlightClass.put("type", className);
+                                JSONFlightClass.put("nbPlaces", flightClass.getCountAvailablePlaces());
+                                JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
+                                JSONArrayFlightClasses.put(JSONFlightClass);
+                            }
+                            JSONArrayFlights.put(JSONFlight);
+                        }
+                    } else {
+                        correctRequest = false;
+                    }
 
+                    //Création de la réponse.
+                    var JSONResponse = new JSONObject();
+                    JSONResponse.put("idRequete", requestId);
+                    //Si la requête était correcte.
+                    if(correctRequest) {
+                        JSONResponse.put("vols", JSONArrayFlights);
+                    } else {
+                        JSONResponse.put("resultat", "Echec");
+                    }
+
+                    //Log de debug.
+                    if(debugMode) {
+                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                            "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
+                    }
+
+                    //Envoi de la réponse.
+                    var response = request.createReply();
+                    //Si la requête était correcte.
+                    if(correctRequest) {
+                        response.setPerformative(ACLMessage.INFORM);
+                    } else {
+                        response.setPerformative(ACLMessage.FAILURE);
+                    }
+                    response.setContent(JSONResponse.toString());
+                    send(response);
+                }
+
+                block();
             }
         });
 
