@@ -248,18 +248,11 @@ public class SearchAgent extends Agent {
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            // Si le jour du vol est exactement le même que le jour demandé
+            // Si le voyage se fait en journée (entre 9h00 et 20h00)
             String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
             String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
             Date flightDateLanding = DateConverter.stringToDate(flightDateLandingStr);
-            if (DateUtils.isSameDay(flightDateTakeoff, requestedDate)) {
-                int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
-                currentRecommandationScore++;
-                ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
-            }
-
-            // Si le voyage se fait en journée (entre 9h00 et 20h00)
             if ((flightDateTakeoff.getHours() >= 9 && flightDateTakeoff.getHours() <= 20 ) &&
                     (flightDateLanding.getHours() >= 9 && flightDateLanding.getHours() <= 20 )) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
@@ -286,5 +279,3 @@ public class SearchAgent extends Agent {
     }
 
 }
-
-
