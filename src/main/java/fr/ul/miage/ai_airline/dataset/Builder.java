@@ -1,5 +1,6 @@
 package fr.ul.miage.ai_airline.dataset;
 
+import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.*;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
@@ -8,23 +9,39 @@ import java.util.Collections;
 import java.util.Date;
 
 /**
- * Constructeur pour le peuplement
- * de la base de données.
+ * Générateur pour le peuplement de la
+ * base de données.
  */
 public class Builder {
-    private static ORM orm = ORM.getInstance();
-
     /**
-     * Construire l'état de base de
-     * la compagnie aérienne, la peupler.
+     * Générer l'état de base de la compagnie
+     * aérienne, la peupler.
      */
     public static void build() {
+        //Récupération de l'ORM pour l'interrogation
+        //de la base de données.
+        var orm = ORM.getInstance();
+
+        //Récupération de la configuration globale.
+        var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
+
         //Etape 1 : nettoyage des tables (reset sequence & remove all).
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Compagnie aérienne][Jeu de données] Nettoyage des vols et avions.");
+        }
+        //Nettoyage.
         orm.reset(FlightClass.class);
         orm.reset(Flight.class);
         orm.reset(Plane.class);
 
-        //Etape 2 : construction des avions.
+        //Etape 2 : génération des avions.
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Compagnie aérienne][Jeu de données] Génération des avions.");
+        }
+        //Génération.
         var poolMoneyInitialization = 10000000;
         var continueToCreateAvion = true;
         while(continueToCreateAvion) {
@@ -53,7 +70,12 @@ public class Builder {
             }
         }
 
-        //Etape 3 : construction des vols.
+        //Etape 3 : génération des vols.
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Compagnie aérienne][Jeu de données] Génération des vols.");
+        }
+        //Génération.
         var planes = orm.findAll(Plane.class);
         var startCityParis = orm.findOne(1, City.class);
         var citysWithoutParis = orm.findWhere("WHERE ID != 1", City.class);
@@ -129,9 +151,9 @@ public class Builder {
                     if(isCargo) {
                         floorPlacePrice = floorPricePerPlace;
                         switch (planeTypeClass.getName()) {
-                            case "Premiere" -> floorPricePerPlace *= rateFirstClass;
-                            case "Economique" -> floorPricePerPlace *= rateEconomicClass;
-                            case "Business" -> floorPricePerPlace *= rateBusinessClass;
+                            case PlaneTypeClass.FIRST -> floorPricePerPlace *= rateFirstClass;
+                            case PlaneTypeClass.BUSINESS -> floorPricePerPlace *= rateBusinessClass;
+                            case PlaneTypeClass.ECONOMIC -> floorPricePerPlace *= rateEconomicClass;
                         }
                     } else {
                         floorPlacePrice = floorPricePerPlace;
@@ -151,5 +173,9 @@ public class Builder {
 
         //Sauvegarde des données globales compagnie.
         //TODO à voir si c'est nécessaire.
+        //Log de debug.
+        if(debugMode) {
+            System.out.println("[Compagnie aérienne][Jeu de données] Mise à jour des constantes.");
+        }
     }
 }

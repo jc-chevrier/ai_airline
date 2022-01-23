@@ -18,18 +18,19 @@ import org.json.JSONObject;
  * de réservation.
  */
 public class ReservationAgent extends Agent {
-    //ORM pour l'échange avec la base de données.
-    private static ORM orm = ORM.getInstance();
-
     @Override
     protected void setup() {
+        //Récupération de l'ORM pour l'interrogation
+        //de la base de données.
+        var orm = ORM.getInstance();
+
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
-        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
         //Log de debug.
         if(debugMode) {
-            System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de réservation: " +
+            System.out.println("[Compagnie aérienne] Initialisation d'un nouvel agent de réservation: " +
                                getLocalName() + " aka " + getAID().getName() + ".");
         }
 
@@ -39,7 +40,7 @@ public class ReservationAgent extends Agent {
             protected void onTick() {
                 //Log de debug.
                 if(debugMode) {
-                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                    System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                        "Nouvelle écoute des requêtes de réservation.");
                 }
 
@@ -51,7 +52,7 @@ public class ReservationAgent extends Agent {
                 if (request != null) {
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                        System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                            "Nouvelle requête de réservation reçue de: " +
                                            request.getSender().getLocalName() + ".");
                     }
@@ -65,7 +66,7 @@ public class ReservationAgent extends Agent {
                         JSONRequest = new JSONObject(request.getContent());
                         //Log de debug.
                         if(debugMode) {
-                            System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                            System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                                "Contenu de la requête de réservation reçue: " + JSONRequest + "!");
                         }
                         //Extraction des données du contenu de la requête reçue.
@@ -74,7 +75,7 @@ public class ReservationAgent extends Agent {
                         className = JSONRequest.getString("classe");
                         countAskedPlaces = JSONRequest.getInt("nbPlaces");
                     } catch (JSONException e) {
-                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                        System.err.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                            "Erreur! Problème à l'analyse d'une requête de réservation : " + request.getContent() + "!");
                         e.printStackTrace();
                         System.exit(1);
@@ -109,7 +110,7 @@ public class ReservationAgent extends Agent {
                                 orm.save(flightClass);
                                 //Log de debug.
                                 if(debugMode) {
-                                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                    System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                                        "Réservation de places d'une classe faite: " + new JSONObject(flightClass) + ".");
                                 }
                             } else {
@@ -133,7 +134,7 @@ public class ReservationAgent extends Agent {
                     }
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                        System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                                            "Envoi d'une réponse à la requête de réservation: " + JSONResponse + ".");
                     }
 

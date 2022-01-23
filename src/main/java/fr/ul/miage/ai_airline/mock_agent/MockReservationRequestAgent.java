@@ -18,20 +18,26 @@ import java.util.Date;
  * réservation de vol.
  */
 public class MockReservationRequestAgent extends Agent {
-    //ORM pour l'échange avec la base de données.
-    public static ORM orm = ORM.getInstance();
     //Séquence des Identifiants de requêtes.
     private static Integer REQUEST_ID = 1;
 
     @Override
     protected void setup() {
+        //Récupération de l'ORM pour l'interrogation
+        //de la base de données.
+        var orm = ORM.getInstance();
+
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
-        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
+
+        //Récupération de la configuration des agents.
+        var agentConfiguration = Configuration.AGENT_CONFIGURATION;
+        var reservationAgentName = agentConfiguration.getProperty("reservation_agent_name");
 
         //Log de debug.
         if(debugMode) {
-            System.out.println("[Domaine = assistant client] Initialisation d'un nouvel agent mock de requête de réservation : " +
+            System.out.println("[Assistant client] Initialisation d'un nouvel agent mock de requête de réservation : " +
                                 getLocalName() + " aka " + getAID().getName() + ".");
 
         }
@@ -42,8 +48,7 @@ public class MockReservationRequestAgent extends Agent {
             protected void onTick() {
                 //Log de debug.
                 if(debugMode) {
-                    System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                       "Nouvelle envoi de requête de réservation.");
+                    System.out.println("[Assistant client][" + getLocalName() + "] Nouvelle envoi de requête de réservation.");
                 }
 
                 //Récupération des classes de vol avec des places disponibles.
@@ -66,21 +71,19 @@ public class MockReservationRequestAgent extends Agent {
 
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                           "Envoi d'une nouvelle requête:" + JSONRequest.toString());
+                        System.out.println("[Assistant client][" + getLocalName() + "] Envoi d'une nouvelle requête:" +
+                                           JSONRequest.toString());
                     }
 
                     //Envoi de la requête.
                     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
                     request.setContent(JSONRequest.toString());
-                    request.addReceiver(new AID(Configuration.AGENT_CONFIGURATION.getProperty("reservation_agent_name"),
-                                                AID.ISLOCALNAME));
+                    request.addReceiver(new AID(reservationAgentName, AID.ISLOCALNAME));
                     send(request);
                 } else {
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = assistant client][Agent = " + getLocalName() + "] " +
-                                           "Aucune place disponible trouvée à demander.");
+                        System.out.println("[Assistant client][" + getLocalName() + "] Aucune place disponible trouvée à demander.");
                     }
                 }
 

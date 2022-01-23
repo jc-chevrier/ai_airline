@@ -12,30 +12,27 @@ import jade.lang.acl.MessageTemplate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Agent pour la gestion des requêtes
  * de recherche de vol.
  */
 public class SearchAgent extends Agent {
-    //ORM pour l'échange avec la base de données.
-    private static ORM orm = ORM.getInstance();
-
     @Override
     protected void setup() {
+        //Récupération de l'ORM pour l'interrogation
+        //de la base de données.
+        var orm = ORM.getInstance();
+
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
-        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debugMode"));
+        var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
         //Log de debug.
         if(debugMode) {
-            System.out.println("[Domaine = compagnie aérienne] Initialisation d'un nouvel agent de recherche: " +
+            System.out.println("[Compagnie aérienne] Initialisation d'un nouvel agent de recherche: " +
                                  getLocalName() + " aka " + getAID().getName() + ".");
         }
 
@@ -45,7 +42,7 @@ public class SearchAgent extends Agent {
             protected void onTick() {
                 //Log de debug.
                 if(debugMode) {
-                    System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                    System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                        "Nouvelle écoute des requêtes de recherche.");
                 }
 
@@ -57,7 +54,7 @@ public class SearchAgent extends Agent {
                 if (request != null) {
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                        System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                            "Nouvelle requête de recherche reçue de: " +
                                            request.getSender().getLocalName() + ".");
                     }
@@ -73,7 +70,7 @@ public class SearchAgent extends Agent {
                         JSONRequest = new JSONObject(request.getContent());
                         //Log de debug.
                         if(debugMode) {
-                            System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                            System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                                "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
                         }
                         //Extraction des données du contenu de la requête reçue.
@@ -84,8 +81,9 @@ public class SearchAgent extends Agent {
                         arrivalCityName = JSONRequest.getString("destination");
                         className = JSONRequest.getString("classe");
                     } catch (JSONException e) {
-                        System.err.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                           "Erreur! Problème à l'analyse d'une requête de recherche : " + request.getContent() + "!");
+                        System.err.println("[Compagnie aérienne][" + getLocalName() + "] " +
+                                           "Erreur! Problème à l'analyse d'une requête de recherche : " +
+                                           request.getContent() + "!");
                         e.printStackTrace();
                         System.exit(1);
                     }
@@ -110,7 +108,7 @@ public class SearchAgent extends Agent {
                                                         "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
                                                         "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
                                                         startDate.toInstant().getEpochSecond() + " " +
-                                                        "AND FORM_TABLE.ID IN " +
+                                                        "AND FROM_TABLE.ID IN " +
                                                             "(SELECT FC2.FLIGHT_ID " +
                                                             "FROM FLIGHT_CLASS FC2 " +
                                                             "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
@@ -120,8 +118,9 @@ public class SearchAgent extends Agent {
                                     Flight.class);
                             //Log de debug.
                             if(debugMode) {
-                                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                                   "Vols filtrés trouvés : " + new JSONObject(flights) + ".");
+                                System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
+                                                   "Nombre de vols filtrés trouvés : " +
+                                                    new JSONObject(flights.size()) + ".");
                             }
                             //Création d'une vue des vols trouvés.
                             for(var entity : flights) {
@@ -176,7 +175,7 @@ public class SearchAgent extends Agent {
                     }
                     //Log de debug.
                     if(debugMode) {
-                        System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                        System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                             "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
                     }
 
