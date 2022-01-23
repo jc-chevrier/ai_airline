@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -94,63 +95,71 @@ public class SearchAgent extends Agent {
                     //la requête si vérification réussie.
                     var correctRequest = true;
                     var JSONArrayFlights = new JSONArray();
-                    var arrivalCity = (City) orm.findOneWhere("WHERE NAME = '" + arrivalCityName + "'", City.class);
-                    //Si la ville d'arrivée existe.
-                    if(arrivalCity != null) {
-                        //Récupération des vols correspondant aux filtres.
-                        var flights = orm.findWhere("INNER JOIN FLIGHT_CLASS AS FC " +
-                                                    "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
-                                                    "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
-                                                    arrivalCity.getId() + " " +
-                                                    "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
-                                                    "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
-                                                    "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
-                                                    startDate.toInstant().getEpochSecond() + " " +
-                                                    "AND FORM_TABLE.ID IN " +
-                                                        "(SELECT FC2.FLIGHT_ID " +
-                                                        "FROM FLIGHT_CLASS FC2 " +
-                                                        "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                                        "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
-                                                        "WHERE PTC.NAME = '" + className + "')",
-                                                    Flight.class);
-                        //Création d'une vue des vols trouvés.
-                        for(var entity : flights) {
-                            var flight = (Flight) entity;
-                            //Récupération des entités liées à un vol.
-                            var plane = (Plane) orm.findOneWhere("WHERE ID = " + flight.getPlaneId(), Plane.class);
-                            var planeType = (PlaneType) orm.findOneWhere("WHERE ID = " + plane.getPlaneTypeId(), PlaneType.class);
-                            var startCity = (City) orm.findOneWhere("WHERE ID = " + flight.getStartCityId(), City.class);
-                            //Création d'une vue d'un vol trouvé.
-                            JSONObject JSONFlight = new JSONObject();
-                            JSONFlight.put("id", flight.getId());
-                            JSONFlight.put("villeDepart", startCity.getName());
-                            JSONFlight.put("villeArrivee", arrivalCity.getName());
-                            JSONFlight.put("dateDepart", DateConverter.dateToString(flight.getStartDate()));
-                            JSONFlight.put("dateArrivee", DateConverter.dateToString(flight.getArrivalDate()));
-                            JSONFlight.put("typeAvion", planeType.getName());
-                            JSONArray JSONArrayFlightClasses = new JSONArray();
-                            JSONFlight.put("classes", JSONArrayFlightClasses);
-                            //Récupération des classes du vol.
-                            var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                                              "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
-                                                              "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
-                                                              "AND PTC.NAME = '" + className + "')",
-                                                              FlightClass.class);
-                            //Création des vues des classes du voltrouvées.
-                            for (var entity2 : flightClasses) {
-                                var flightClass = (FlightClass) entity2;
-                                //Récupération de la classe de l'avion associée.
-                                var planeTypeClass = (PlaneTypeClass) orm.findOneWhere("WHERE ID = " +
-                                                                                        flightClass.getPlaneTypeClassId(),
-                                                                                        PlaneTypeClass.class);
-                                //Création d'une vue d'une classe du vol trouvée.
-                                JSONObject JSONFlightClass = new JSONObject();
-                                JSONFlightClass.put("type", className);
-                                JSONFlightClass.put("nbPlaces", flightClass.getCountAvailablePlaces());
-                                JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
-                                JSONArrayFlightClasses.put(JSONFlightClass);
+                    //Si la classe demandée existe.
+                    if(Arrays.asList(PlaneTypeClass.FIRST, PlaneTypeClass.BUSINESS, PlaneTypeClass.ECONOMIC)
+                             .contains(className)) {
+                        var arrivalCity = (City) orm.findOneWhere("WHERE NAME = '" + arrivalCityName + "'", City.class);
+                        //Si la ville d'arrivée existe.
+                        if(arrivalCity != null) {
+                            //Récupération des vols correspondant aux filtres.
+                            var flights = orm.findWhere("INNER JOIN FLIGHT_CLASS AS FC " +
+                                                        "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
+                                                        "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
+                                                        arrivalCity.getId() + " " +
+                                                        "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
+                                                        "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
+                                                        "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
+                                                        startDate.toInstant().getEpochSecond() + " " +
+                                                        "AND FORM_TABLE.ID IN " +
+                                                            "(SELECT FC2.FLIGHT_ID " +
+                                                            "FROM FLIGHT_CLASS FC2 " +
+                                                            "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                                            "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
+                                                            "WHERE PTC.NAME = '" + className + "' " +
+                                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0)",
+                                    Flight.class);
+                            //Log de debug.
+                            if(debugMode) {
+                                System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                                   "Vols filtrés trouvés : " + new JSONObject(flights) + ".");
                             }
-                            JSONArrayFlights.put(JSONFlight);
+                            //Création d'une vue des vols trouvés.
+                            for(var entity : flights) {
+                                var flight = (Flight) entity;
+                                //Récupération des entités liées à un vol.
+                                var plane = (Plane) orm.findOneWhere("WHERE ID = " + flight.getPlaneId(), Plane.class);
+                                var planeType = (PlaneType) orm.findOneWhere("WHERE ID = " + plane.getPlaneTypeId(), PlaneType.class);
+                                var startCity = (City) orm.findOneWhere("WHERE ID = " + flight.getStartCityId(), City.class);
+                                //Création d'une vue d'un vol trouvé.
+                                JSONObject JSONFlight = new JSONObject();
+                                JSONFlight.put("id", flight.getId());
+                                JSONFlight.put("villeDepart", startCity.getName());
+                                JSONFlight.put("villeArrivee", arrivalCity.getName());
+                                JSONFlight.put("dateDepart", DateConverter.dateToString(flight.getStartDate()));
+                                JSONFlight.put("dateArrivee", DateConverter.dateToString(flight.getArrivalDate()));
+                                JSONFlight.put("typeAvion", planeType.getName());
+                                JSONArray JSONArrayFlightClasses = new JSONArray();
+                                JSONFlight.put("classes", JSONArrayFlightClasses);
+                                //Récupération des classes du vol.
+                                var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                                                  "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
+                                                                  "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
+                                                                  "AND PTC.NAME = '" + className + "')",
+                                        FlightClass.class);
+                                //Création des vues des classes du voltrouvées.
+                                for (var entity2 : flightClasses) {
+                                    var flightClass = (FlightClass) entity2;
+                                    //Création d'une vue d'une classe du vol trouvée.
+                                    JSONObject JSONFlightClass = new JSONObject();
+                                    JSONFlightClass.put("type", className);
+                                    JSONFlightClass.put("nbPlaces", flightClass.getCountAvailablePlaces());
+                                    JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
+                                    JSONArrayFlightClasses.put(JSONFlightClass);
+                                }
+                                JSONArrayFlights.put(JSONFlight);
+                            }
+                        } else {
+                            correctRequest = false;
                         }
                     } else {
                         correctRequest = false;
@@ -165,7 +174,6 @@ public class SearchAgent extends Agent {
                     } else {
                         JSONResponse.put("resultat", "Echec");
                     }
-
                     //Log de debug.
                     if(debugMode) {
                         System.out.println("[Domaine = compagnie aérienne][Agent = " + getLocalName() + "] " +

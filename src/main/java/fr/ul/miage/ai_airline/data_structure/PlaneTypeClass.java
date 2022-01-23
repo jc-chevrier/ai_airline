@@ -14,6 +14,11 @@ public class PlaneTypeClass extends Entity {
     public static String NAME_TABLE = "PLANE_TYPE_CLASS";
     //Structure de l'entité [attribut -> type].
     public static Map<String, Class> STRUCTURE;
+    //Types de classe existant.
+    public final static String FIRST = "Première";
+    public final static String BUSINESS = "Business";
+    public final static String ECONOMIC = "Economique";
+
 
     //Initialisation de la structure.
     static {
