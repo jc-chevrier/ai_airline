@@ -120,7 +120,7 @@ public class SearchAgent extends Agent {
                             //Log de debug.
                             if(debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                                   "Nombre de vols filtrés trouvés : " +
+                                                   "Vols filtrés trouvés : " +
                                                     new JSONArray(flights) + ".");
                             }
                             //Création d'une vue des vols trouvés.
@@ -198,5 +198,3 @@ public class SearchAgent extends Agent {
 
     }
 }
-
-
