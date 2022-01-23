@@ -4,6 +4,8 @@ import fr.ul.miage.ai_airline.configuration.Configuration;
 import fr.ul.miage.ai_airline.data_structure.*;
 import fr.ul.miage.ai_airline.orm.Entity;
 import fr.ul.miage.ai_airline.orm.ORM;
+
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
@@ -180,13 +182,13 @@ public class Builder {
             System.out.println("[Compagnie aérienne][Jeu de données] Mise à jour du contexte global.");
         }
         //Modification.
-        var costInitialization = (Double) orm.findNative("SELECT SUM(PT.sale_price) AS COST_INITIALIZATION " +
-                                                         "FROM PLANE P " +
-                                                         "INNER JOIN PLANE_TYPE PT " +
-                                                         "ON P.PLANE_TYPE_ID = PT.ID")
-                                             .get(0)
-                                             .get("COST_INITIALIZATION");
-        global.incrementBalance(-costInitialization);
+        var costInitialization = (BigDecimal) orm.findNative("SELECT SUM(PT.sale_price) AS COST_INITIALIZATION " +
+                                                             "FROM PLANE P " +
+                                                             "INNER JOIN PLANE_TYPE PT " +
+                                                             "ON P.PLANE_TYPE_ID = PT.ID")
+                                                  .get(0)
+                                                  .get("COST_INITIALIZATION");
+        global.incrementBalance(-costInitialization.doubleValue());
         orm.save(global);
     }
 }
