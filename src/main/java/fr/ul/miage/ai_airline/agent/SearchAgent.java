@@ -114,13 +114,14 @@ public class SearchAgent extends Agent {
                                                             "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
                                                             "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
                                                             "WHERE PTC.NAME = '" + className + "' " +
-                                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0)",
+                                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0) " +
+                                                       "ORDER BY FROM_TABLE.START_DATE",
                                                        Flight.class);
                             //Log de debug.
                             if(debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                                    "Nombre de vols filtrés trouvés : " +
-                                                    new JSONObject(flights.size()) + ".");
+                                                    new JSONObject(flights) + ".");
                             }
                             //Création d'une vue des vols trouvés.
                             for(var entity : flights) {

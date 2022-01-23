@@ -168,8 +168,7 @@ public class ORM {
                                 structure.keySet()
                                         .stream()
                                         .collect(Collectors.joining(", FROM_TABLE.", "FROM_TABLE.", "")) +
-                                " FROM " + tableName + " AS FROM_TABLE " + predicate + "" +
-                                " ORDER BY FROM_TABLE.ID;";
+                                " FROM " + tableName + " AS FROM_TABLE " + predicate + ";";
 
         List<Entity> entitys = new ArrayList<Entity>();
         try {
