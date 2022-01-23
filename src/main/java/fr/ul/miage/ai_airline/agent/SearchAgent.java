@@ -216,10 +216,10 @@ public class SearchAgent extends Agent {
      * @param requestedDate La date de départ demandée par l'utilisateur
      */
     private void setScore(JSONArray jsonFlights, Date requestedDate) {
-        // On initialise la valeur de comparaison avec le premier résultat
+        //On initialise la valeur de comparaison avec le premier résultat.
         Double lowestPriceFound = jsonFlights.getJSONObject(0).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
 
-        // On commence par chercher le vol le moins cher parmi tous les résultats
+        //On commence par chercher le vol le moins cher parmi tous les résultats.
         for (Object jsonFlight : jsonFlights) {
             Double currentPrice = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
             if (lowestPriceFound > currentPrice) {
@@ -227,9 +227,9 @@ public class SearchAgent extends Agent {
             }
         }
 
-        // On attribue les scores selon différents critères
+        //On attribue les scores selon différents critères.
         for (Object jsonFlight : jsonFlights) {
-            // On connait le prix le plus petit, on cherche le vol avec ce prix et on lui donne 1
+            //On connait le prix le plus petit, on cherche le vol avec ce prix et on lui donne 1.
             Double currentPrice = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
             if (lowestPriceFound == currentPrice) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
@@ -237,7 +237,7 @@ public class SearchAgent extends Agent {
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            // Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1
+            //Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1.
             int avalaibleSeats = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getInt("nbPlaces");
             if (avalaibleSeats > 10) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
@@ -245,7 +245,7 @@ public class SearchAgent extends Agent {
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            // Si le voyage se fait en journée (entre 9h00 et 20h00)
+            //Si le voyage se fait en journée (entre 9h00 et 20h00).
             String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
             String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
@@ -265,7 +265,7 @@ public class SearchAgent extends Agent {
      * @return Le tableau trié par score de recommandation
      */
     private JSONArray sortByScore(JSONArray jsonFlights) {
-        // On trie dans l'ordre décroissant via le champ "recommandationScore"
+        //On trie dans l'ordre décroissant via le champ "recommandationScore".
         List<Object> list = jsonFlights.toList();
         list.sort(Comparator.comparingInt(o -> ((JSONObject)o).getInt("recommandationScore")).reversed());
         return new JSONArray(list);
