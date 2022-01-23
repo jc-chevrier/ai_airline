@@ -8,11 +8,9 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -172,9 +170,9 @@ public class SearchAgent extends Agent {
                         correctRequest = false;
                     }
 
-                    // Calcul des scores de recommandation
+                    //Calcul des scores de recommandation.
                     setScore(JSONArrayFlights, startDate);
-                    // Tri des résultats en fonction des scores de recommandation
+                    //Tri des résultats en fonction des scores de recommandation.
                     JSONArrayFlights = sortByScore(JSONArrayFlights);
 
                     //Création de la réponse.
@@ -211,6 +209,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
+     * TODO commentaire
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @param requestedDate La date de départ demandée par l'utilisateur
@@ -239,13 +238,13 @@ public class SearchAgent extends Agent {
 
             //Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1.
             int avalaibleSeats = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getInt("nbPlaces");
-            if (avalaibleSeats > 10) {
+            if (avalaibleSeats > 10) {//TODO remettre 10 dans le contexte global.
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            //Si le voyage se fait en journée (entre 9h00 et 20h00).
+            //Si le voyage se fait en journée (entre 9h00 et 20h00).//TODO refactoring.
             String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
             String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
@@ -260,6 +259,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
+     * TODO commentaire
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @return Le tableau trié par score de recommandation
