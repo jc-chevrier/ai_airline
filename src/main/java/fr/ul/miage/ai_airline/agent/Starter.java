@@ -59,16 +59,16 @@ public class Starter {
                                                                        SearchAgent.class.getName(),
                                                                        null);
             searchAgentController.start();
-            //Lancement du mock de l'agent de requête de réservation de vol.
-            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName,
-                                                                                MockReservationRequestAgent.class.getName(),
-                                                                                null);
-            mockReservationAgentController.start();
-            //Lancement de l'agent de réservation de vol.
-            reservationAgentController = containerController.createNewAgent(reservationAgentName,
-                                                                            ReservationAgent.class.getName(),
-                                                                            null);
-            reservationAgentController.start();
+//            //Lancement du mock de l'agent de requête de réservation de vol.
+//            mockReservationAgentController = containerController.createNewAgent(mockReservationAgentName,
+//                                                                                MockReservationRequestAgent.class.getName(),
+//                                                                                null);
+//            mockReservationAgentController.start();
+//            //Lancement de l'agent de réservation de vol.
+//            reservationAgentController = containerController.createNewAgent(reservationAgentName,
+//                                                                            ReservationAgent.class.getName(),
+//                                                                            null);
+//            reservationAgentController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur! Problème au cours du démarrage des agents!");
             e.printStackTrace();
