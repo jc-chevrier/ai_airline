@@ -55,10 +55,10 @@ public class MockSearchRequestAgent extends Agent {
                 JSONRequest.put("idRequete", REQUEST_ID);
                 REQUEST_ID++;
                 JSONRequest.put("dateDemande", DateConverter.dateToString(new Date()));
-                JSONRequest.put("dateDepart", "2022-01-28 11:30:30");
-                JSONRequest.put("prixHaut", "200.0");
-                JSONRequest.put("prixBas", "10.0");
-                JSONRequest.put("destination", "Barcelone (Espagne)");
+                JSONRequest.put("dateDepart", "2022-01-28 00:30:30");
+                JSONRequest.put("prixHaut", "2000000.0");
+                JSONRequest.put("prixBas", "1.0");
+                JSONRequest.put("destination", "New York (Etats-Unis)");
                 JSONRequest.put("classe", "Economique");
 
                 //Log de debug.

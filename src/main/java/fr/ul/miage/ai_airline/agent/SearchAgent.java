@@ -8,11 +8,12 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Arrays;
-import java.util.Date;
+
+import java.util.*;
 
 /**
  * Agent pour la gestion des requêtes
@@ -30,9 +31,9 @@ public class SearchAgent extends Agent {
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
         //Log de debug.
-        if(debugMode) {
+        if (debugMode) {
             System.out.println("[Compagnie aérienne] Initialisation d'un nouvel agent de recherche: " +
-                                 getLocalName() + " aka " + getAID().getName() + ".");
+                    getLocalName() + " aka " + getAID().getName() + ".");
         }
 
         //Comportement d'écoute et de gestion des
@@ -41,9 +42,9 @@ public class SearchAgent extends Agent {
             @Override
             public void action() {
                 //Log de debug.
-                if(debugMode) {
+                if (debugMode) {
                     System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                       "Nouvelle écoute des requêtes de recherche.");
+                            "Nouvelle écoute des requêtes de recherche.");
                 }
 
                 //Attente d'une nouvelle requête de recherche.
@@ -53,10 +54,10 @@ public class SearchAgent extends Agent {
                 //Nouvelle requête de recherche.
                 if (request != null) {
                     //Log de debug.
-                    if(debugMode) {
+                    if (debugMode) {
                         System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                           "Nouvelle requête de recherche reçue de: " +
-                                           request.getSender().getLocalName() + ".");
+                                "Nouvelle requête de recherche reçue de: " +
+                                request.getSender().getLocalName() + ".");
                     }
 
                     //Analyse de la requête et extraction de ses données.
@@ -69,9 +70,9 @@ public class SearchAgent extends Agent {
                         //Analyse de contenu de la requête.
                         JSONRequest = new JSONObject(request.getContent());
                         //Log de debug.
-                        if(debugMode) {
+                        if (debugMode) {
                             System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                               "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
+                                    "Contenu de la requête de recherche reçue: " + JSONRequest + "!");
                         }
                         //Extraction des données du contenu de la requête reçue.
                         startDate = DateConverter.stringToDate(JSONRequest.getString("dateDepart"));
@@ -82,8 +83,8 @@ public class SearchAgent extends Agent {
                         className = JSONRequest.getString("classe");
                     } catch (JSONException e) {
                         System.err.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                           "Erreur! Problème à l'analyse d'une requête de recherche : " +
-                                           request.getContent() + "!");
+                                "Erreur! Problème à l'analyse d'une requête de recherche : " +
+                                request.getContent() + "!");
                         e.printStackTrace();
                         System.exit(1);
                     }
@@ -94,37 +95,37 @@ public class SearchAgent extends Agent {
                     var correctRequest = true;
                     var JSONArrayFlights = new JSONArray();
                     //Si la classe demandée existe.
-                    if(Arrays.asList(PlaneTypeClass.FIRST, PlaneTypeClass.BUSINESS, PlaneTypeClass.ECONOMIC)
-                             .contains(className)) {
+                    if (Arrays.asList(PlaneTypeClass.FIRST, PlaneTypeClass.BUSINESS, PlaneTypeClass.ECONOMIC)
+                            .contains(className)) {
                         var arrivalCity = (City) orm.findOneWhere("WHERE NAME = '" + arrivalCityName + "'", City.class);
                         //Si la ville d'arrivée existe.
-                        if(arrivalCity != null) {
+                        if (arrivalCity != null) {
                             //Récupération des vols correspondant aux filtres.
                             var flights = orm.findWhere("INNER JOIN FLIGHT_CLASS AS FC " +
-                                                        "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
-                                                        "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
-                                                        arrivalCity.getId() + " " +
-                                                        "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
-                                                        "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
-                                                        "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
-                                                        startDate.toInstant().getEpochSecond() + " " +
-                                                        "AND FROM_TABLE.ID IN " +
-                                                            "(SELECT FC2.FLIGHT_ID " +
-                                                            "FROM FLIGHT_CLASS AS FC2 " +
-                                                            "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                                            "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
-                                                            "WHERE PTC.NAME = '" + className + "' " +
-                                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0) " +
-                                                       "ORDER BY FROM_TABLE.START_DATE",
-                                                       Flight.class);
+                                            "ON FC.FLIGHT_ID = FROM_TABLE.ID " +
+                                            "WHERE FROM_TABLE.ARRIVAL_CITY_ID = " +
+                                            arrivalCity.getId() + " " +
+                                            "AND FC.PLACE_PRICE >= " + lowerPriceLimit + " " +
+                                            "AND FC.PLACE_PRICE <= " + upperPriceLimit + " " +
+                                            "AND EXTRACT(EPOCH FROM FROM_TABLE.START_DATE) >= " +
+                                            startDate.toInstant().getEpochSecond() + " " +
+                                            "AND FROM_TABLE.ID IN " +
+                                            "(SELECT FC2.FLIGHT_ID " +
+                                            "FROM FLIGHT_CLASS AS FC2 " +
+                                            "INNER JOIN PLANE_TYPE_CLASS AS PTC " +
+                                            "ON PTC.ID = FC2.PLANE_TYPE_CLASS_ID " +
+                                            "WHERE PTC.NAME = '" + className + "' " +
+                                            "AND FC2.COUNT_AVAILABLE_PLACES > 0) " +
+                                            "ORDER BY FROM_TABLE.START_DATE",
+                                    Flight.class);
                             //Log de debug.
-                            if(debugMode) {
+                            if (debugMode) {
                                 System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                                   "Nombre de vols filtrés trouvés : " +
-                                                    new JSONArray(flights) + ".");
+                                        "Nombre de vols filtrés trouvés : " +
+                                        new JSONArray(flights) + ".");
                             }
                             //Création d'une vue des vols trouvés.
-                            for(var entity : flights) {
+                            for (var entity : flights) {
                                 var flight = (Flight) entity;
                                 //Récupération des entités liées à un vol.
                                 var plane = (Plane) orm.findOneWhere("WHERE ID = " + flight.getPlaneId(), Plane.class);
@@ -138,13 +139,14 @@ public class SearchAgent extends Agent {
                                 JSONFlight.put("dateDepart", DateConverter.dateToString(flight.getStartDate()));
                                 JSONFlight.put("dateArrivee", DateConverter.dateToString(flight.getArrivalDate()));
                                 JSONFlight.put("typeAvion", planeType.getName());
+                                JSONFlight.put("recommandationScore", 0);
                                 JSONArray JSONArrayFlightClasses = new JSONArray();
                                 JSONFlight.put("classes", JSONArrayFlightClasses);
                                 //Récupération des classes du vol.
                                 var flightClasses = orm.findWhere("INNER JOIN PLANE_TYPE_CLASS AS PTC " +
-                                                                  "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
-                                                                  "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
-                                                                  "AND PTC.NAME = '" + className + "'",
+                                                "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
+                                                "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
+                                                "AND PTC.NAME = '" + className + "'",
                                         FlightClass.class);
                                 //Création des vues des classes du voltrouvées.
                                 for (var entity2 : flightClasses) {
@@ -156,6 +158,7 @@ public class SearchAgent extends Agent {
                                     JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
                                     JSONArrayFlightClasses.put(JSONFlightClass);
                                 }
+
                                 JSONArrayFlights.put(JSONFlight);
                             }
                         } else {
@@ -165,38 +168,120 @@ public class SearchAgent extends Agent {
                         correctRequest = false;
                     }
 
+                    // Calcul des scores de recommandation
+                    setScore(JSONArrayFlights, startDate);
+                    // Tri des résultats en fonction des scores de recommandation
+                    JSONArrayFlights = sortByScore(JSONArrayFlights);
+
                     //Création de la réponse.
                     var JSONResponse = new JSONObject();
                     JSONResponse.put("idRequete", requestId);
                     //Si la requête était correcte.
-                    if(correctRequest) {
+                    if (correctRequest) {
                         JSONResponse.put("vols", JSONArrayFlights);
                     } else {
                         JSONResponse.put("resultat", "Echec");
                     }
+
                     //Log de debug.
-                    if(debugMode) {
+                    if (debugMode) {
                         System.out.println("[Compagnie aérienne][" + getLocalName() + "] " +
-                                            "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
+                                "Envoi d'une réponse à la requête de recherche: " + JSONResponse + ".");
                     }
 
                     //Envoi de la réponse.
                     var response = request.createReply();
                     //Si la requête était correcte.
-                    if(correctRequest) {
+                    if (correctRequest) {
                         response.setPerformative(ACLMessage.INFORM);
                     } else {
                         response.setPerformative(ACLMessage.FAILURE);
                     }
                     response.setContent(JSONResponse.toString());
                     send(response);
+                    System.exit(1);
                 }
-
                 block();
             }
         });
 
     }
+
+    /**
+     *
+     * @param jsonFlights Le tableau de vols trouvés
+     * @param requestedDate La date de départ demandée par l'utilisateur
+     */
+    private void setScore(JSONArray jsonFlights, Date requestedDate) {
+        // On initialise la valeur de comparaison avec le premier résultat
+        Double lowestPriceFound = jsonFlights.getJSONObject(0).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
+
+        // On commence par chercher le vol le moins cher parmi tous les résultats
+        for (Object jsonFlight : jsonFlights) {
+            Double currentPrice = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
+            if (lowestPriceFound > currentPrice) {
+                lowestPriceFound = currentPrice;
+            }
+        }
+
+        // On attribue les scores selon différents critères
+        for (Object jsonFlight : jsonFlights) {
+
+            // On connait le prix le plus petit, on cherche le vol avec ce prix et on lui donne 1
+            Double currentPrice = ((JSONObject) jsonFlight).getJSONArray("classes")
+                    .getJSONObject(0).getDouble("prixPlace");
+            if (lowestPriceFound == currentPrice) {
+                int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
+                currentRecommandationScore++;
+                ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
+            }
+
+            // Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1
+            int avalaibleSeats = ((JSONObject) jsonFlight).getJSONArray("classes")
+                    .getJSONObject(0).getInt("nbPlaces");
+            if (avalaibleSeats > 10) {
+                int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
+                currentRecommandationScore++;
+                ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
+            }
+
+            // Si le jour du vol est exactement le même que le jour demandé
+            String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
+            String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
+            Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
+            Date flightDateLanding = DateConverter.stringToDate(flightDateLandingStr);
+            if (DateUtils.isSameDay(flightDateTakeoff, requestedDate)) {
+                int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
+                currentRecommandationScore++;
+                ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
+            }
+
+            // Si le voyage se fait en journée (entre 9h00 et 20h00)
+            if ((flightDateTakeoff.getHours() >= 9 && flightDateTakeoff.getHours() <= 20 ) &&
+                    (flightDateLanding.getHours() >= 9 && flightDateLanding.getHours() <= 20 )) {
+                int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
+                currentRecommandationScore++;
+                ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param jsonFlights Le tableau de vols trouvés
+     * @return Le tableau trié par score de recommandation
+     */
+    private JSONArray sortByScore(JSONArray jsonFlights) {
+        List<JSONObject> list = new ArrayList<>();
+        // On créé une liste contenant tous les vols du JSON
+        for (Object jsonFlight : jsonFlights) {
+            list.add((JSONObject) jsonFlight);
+        }
+        // On trie dans l'ordre décroissant via le champ "recommandationScore"
+        list.sort(Comparator.comparingInt(o -> ((JSONObject)o).getInt("recommandationScore")).reversed());
+        return new JSONArray(list);
+    }
+
 }
 
 
