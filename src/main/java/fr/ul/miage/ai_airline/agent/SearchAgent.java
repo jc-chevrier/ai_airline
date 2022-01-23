@@ -250,8 +250,8 @@ public class SearchAgent extends Agent {
             String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
             Date flightDateLanding = DateConverter.stringToDate(flightDateLandingStr);
-            if ((flightDateTakeoff.getHours() >= 9 && flightDateTakeoff.getHours() <= 20 ) &&
-                (flightDateLanding.getHours() >= 9 && flightDateLanding.getHours() <= 20 )) {
+            if ((flightDateTakeoff.getHours() >= 9 && flightDateTakeoff.getHours() <= 20) &&
+                (flightDateLanding.getHours() >= 9 && flightDateLanding.getHours() <= 20)) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
