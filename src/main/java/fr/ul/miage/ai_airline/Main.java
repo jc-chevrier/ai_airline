@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         //Construction de l'état de base de la
         //compagnie aérienne (jeu de données).
-        Builder.build();
+//        Builder.build();
         //Lancement des agents de la compagnie
         //aérienne.
         Starter.start();

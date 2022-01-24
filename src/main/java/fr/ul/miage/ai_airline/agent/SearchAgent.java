@@ -163,7 +163,7 @@ public class SearchAgent extends Agent {
                                     JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
                                     JSONArrayFlightClasses.put(JSONFlightClass);
                                     // Mémorisation du nombre de places disponibles
-                                    seatsAvalaible = flightClass.getCountAvailablePlaces();
+                                    seatsAvalaible = flightClass.getCountAvailablePlaces()-flightClass.getCountOccupiedPlaces();
                                 }
                                 if (seatsRequested <= seatsAvalaible){
                                     JSONArrayFlights.put(JSONFlight);
