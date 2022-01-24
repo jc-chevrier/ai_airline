@@ -62,7 +62,8 @@ public class SearchAgent extends Agent {
 
                     //Analyse de la requête et extraction de ses données.
                     JSONObject JSONRequest = null;
-                    Integer requestId = null;
+                    Integer requestId = null, seatsRequested = null;
+                    Integer seatsAvalaible = null;
                     Date startDate = null;
                     Double upperPriceLimit = null, lowerPriceLimit = null;
                     String arrivalCityName = null, className = null;
@@ -81,6 +82,8 @@ public class SearchAgent extends Agent {
                         lowerPriceLimit = JSONRequest.getDouble("prixBas");
                         arrivalCityName = JSONRequest.getString("destination");
                         className = JSONRequest.getString("classe");
+                        seatsRequested = JSONRequest.getInt("nbPlaces");
+
                     } catch (JSONException e) {
                         System.err.println("[Compagnie aérienne][" + getLocalName() + "] " +
                                            "Erreur! Problème à l'analyse d'une requête de recherche : " +
@@ -159,9 +162,13 @@ public class SearchAgent extends Agent {
                                     JSONFlightClass.put("nbPlaces", flightClass.getCountAvailablePlaces());
                                     JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
                                     JSONArrayFlightClasses.put(JSONFlightClass);
+                                    // Mémorisation du nombre de places disponibles
+                                    seatsAvalaible = flightClass.getCountAvailablePlaces();
+                                }
+                                if (seatsRequested <= seatsAvalaible){
+                                    JSONArrayFlights.put(JSONFlight);
                                 }
 
-                                JSONArrayFlights.put(JSONFlight);
                             }
                         } else {
                             correctRequest = false;
