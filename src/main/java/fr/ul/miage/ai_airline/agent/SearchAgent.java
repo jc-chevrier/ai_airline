@@ -219,7 +219,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * TODO commentaire.
+     * Affectation de score de recommendation selon plusieurs critères
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @param requestedDate La date de départ demandée par l'utilisateur
@@ -254,13 +254,11 @@ public class SearchAgent extends Agent {
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            //Si le voyage se fait en journée (entre 9h00 et 20h00).//TODO refactoring.
+            // Si l'heure du décollage est à moins de 2h de celle demandée
             String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
-            String flightDateLandingStr = ((JSONObject) jsonFlight).getString("dateArrivee");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
-            Date flightDateLanding = DateConverter.stringToDate(flightDateLandingStr);
-            if ((flightDateTakeoff.getHours() >= 9 && flightDateTakeoff.getHours() <= 20) &&
-                (flightDateLanding.getHours() >= 9 && flightDateLanding.getHours() <= 20)) {
+            int timeToWait = flightDateTakeoff.getHours() - requestedDate.getHours();
+            if ( timeToWait <= 2 ) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
@@ -269,7 +267,7 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * TODO commentaire.
+     * Tri des vols retournés par score de recommendation décroissant
      *
      * @param jsonFlights Le tableau de vols trouvés
      * @return Le tableau trié par score de recommandation
