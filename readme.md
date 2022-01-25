@@ -11,6 +11,11 @@ des assistants intelligents.
 - CRINON Nicolas
 
 ### Technologies
-- Java 17 
-- Maven 
-- Jade
+- `Java 17` 
+- `Maven` 
+- `Jade`
+
+### Exécution
+Se rendre dans la branche `prod`, ou dans la branche `example`:
+Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
+OS.
