@@ -1,30 +1,30 @@
 ## Solution
 Projet AI Airline
 
-### Description 
+#### Description 
 Projet simulant une compagnie aérienne avec
 des assistants intelligents.
 
-### Equipe
+#### Equipe
 
 - BONCI Jérémy
 - CHEVRIER Jean-Christophe
 - CRINON Nicolas
 
-### Technologies
+#### Technologies
 
 - `Java 17` 
 - `Maven` 
 - `Jade`
 
-### Exécution
+#### Exécution
 
 1. Se rendre dans la branche `example`, ou dans la branche `prod`.
 
 2. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS.
 
-### Branches
+#### Branches
 
 - `example`: branche contenant les classes java compilées, et les exécutables
   bash et batch du projet, et contenant des mocks simulant les agents de l'assistant client 
