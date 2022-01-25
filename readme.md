@@ -1,4 +1,5 @@
-## Projet AI Airline
+## Solution
+Projet `AI Airline`
 
 ### Description 
 Projet simulant une compagnie aérienne avec
