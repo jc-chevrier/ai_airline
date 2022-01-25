@@ -22,6 +22,7 @@ public class CancellerAgent extends Agent {
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
 
+
         //Récupération du contexte global.
         Global global = (Global) orm.findOne(1, Global.class);
 
