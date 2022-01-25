@@ -35,3 +35,10 @@ OS.
 
 - `dev`: branche contenant les sources du projet: les classes `java` dans
   `/src`, et les utilitaires exécutables dans `/cmd`.
+
+#### Problème de résolution de dépendence
+
+La dépendance de `Jade` déclarée dans le `pom.xml` n'est plus résolut par 
+maven, si vous souhaitez utilisé la branche dev, vous devez la renseigner 
+vous-même dans le répertoire de votre pc [...]/.m2/com/ qui est le répertoire
+des dépendances centralisées sur votre pc.
