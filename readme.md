@@ -1,5 +1,5 @@
 ## Solution
-Projet `AI Airline`
+Projet AI Airline
 
 ### Description 
 Projet simulant une compagnie aérienne avec
