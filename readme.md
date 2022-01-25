@@ -34,11 +34,13 @@ OS.
   `bash` et `batch` du projet, <i><b>sans les mocks des agents de l'assistant client</b></i>.
 
 - `dev`: branche contenant les sources du projet: les classes `java` dans
-  `/src`, et les utilitaires exécutables dans `/cmd`.
+  `src/`, et les utilitaires exécutables dans `cmd/`.
 
 #### Problème de résolution de dépendence
 
 La dépendance de `Jade` déclarée dans le `pom.xml` n'est plus résolut par 
-maven, si vous souhaitez utilisé la branche dev, vous devez la renseigner 
-vous-même dans le répertoire de votre pc [...]/.m2/com/ qui est le répertoire
-des dépendances centralisées sur votre pc.
+maven, si vous souhaitez utiliser la branche `dev`, vous devez renseigner la 
+dépendance vous-même dans le répertoire de votre pc `[...]/.m2/com/` qui est
+le répertoire des dépendances centralisées sur votre pc. Vous pouvez trouver
+dépendance de `Jade` à copier dans le répertoire `jade_depenecy/` du répertoire 
+`git`.
