@@ -59,7 +59,7 @@ public class CancellationAgent extends Agent {
                     //Si seulement 10% ou moins des places sont occupées
                     //alors le vol est annulé.
                     double percent = (sumOccupiedSeats/sumCapacity) * 100;
-                    if (percent < 10.00){
+                    if (percent < global.getPercentageCancellation() * 100){
                         //On supprime chaque classe du vol.
                         for (var entity : flightClasses) {
                             var flightClass = (FlightClass) entity;
