@@ -17,5 +17,6 @@ des assistants intelligents.
 
 ### Exécution
 Se rendre dans la branche `prod`, ou dans la branche `example`:
+<br>
 Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS.
