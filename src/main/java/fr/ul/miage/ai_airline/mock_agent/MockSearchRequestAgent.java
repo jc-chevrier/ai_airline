@@ -60,6 +60,7 @@ public class MockSearchRequestAgent extends Agent {
                 JSONRequest.put("prixBas", "1.0");
                 JSONRequest.put("destination", "New York (Etats-Unis)");
                 JSONRequest.put("classe", "Economique");
+                JSONRequest.put("nbPlaces", "4");
 
                 //Log de debug.
                 if(debugMode) {

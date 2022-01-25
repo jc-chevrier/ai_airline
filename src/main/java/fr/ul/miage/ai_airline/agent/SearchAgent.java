@@ -153,7 +153,7 @@ public class SearchAgent extends Agent {
                                                                   "ON PTC.ID = FROM_TABLE.PLANE_TYPE_CLASS_ID " +
                                                                   "WHERE FROM_TABLE.FLIGHT_ID = " + flight.getId() + " " +
                                                                   "AND PTC.NAME = '" + className + "'",
-                                        FlightClass.class);
+                                                                  FlightClass.class);
                                 //Création des vues des classes du voltrouvées.
                                 for (var entity2 : flightClasses) {
                                     var flightClass = (FlightClass) entity2;
@@ -163,7 +163,7 @@ public class SearchAgent extends Agent {
                                     JSONFlightClass.put("nbPlaces", flightClass.getCountAvailablePlaces());
                                     JSONFlightClass.put("prixPlace", flightClass.getPlacePrice());
                                     JSONArrayFlightClasses.put(JSONFlightClass);
-                                    // Mémorisation du nombre de places disponibles
+                                    //Mémorisation du nombre de places disponibles.
                                     seatsAvalaible = flightClass.getCountAvailablePlaces()-flightClass.getCountOccupiedPlaces();
                                 }
                                 if (seatsRequested <= seatsAvalaible){
@@ -226,6 +226,13 @@ public class SearchAgent extends Agent {
      * @param requestedDate La date de départ demandée par l'utilisateur
      */
     private void setScore(JSONArray jsonFlights, Date requestedDate, int freeSeatsToRecommand) {
+        //Récupération de l'ORM pour l'interrogation
+        //de la base de données.
+        var orm = ORM.getInstance();
+
+        //Récupération du contexte global.
+        Global global = (Global) orm.findOne(1, Global.class);
+
         //On initialise la valeur de comparaison avec le premier résultat.
         Double lowestPriceFound = jsonFlights.getJSONObject(0).getJSONArray("classes").getJSONObject(0).getDouble("prixPlace");
 
@@ -255,11 +262,11 @@ public class SearchAgent extends Agent {
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
             }
 
-            // Si l'heure du décollage est à moins de 2h de celle demandée
+            //Si l'heure du décollage est à moins de 2h de celle demandée.
             String flightDateTakeoffStr = ((JSONObject) jsonFlight).getString("dateDepart");
             Date flightDateTakeoff = DateConverter.stringToDate(flightDateTakeoffStr);
             int timeToWait = flightDateTakeoff.getHours() - requestedDate.getHours();
-            if ( timeToWait <= 2 ) {
+            if (timeToWait <= global.getOffsetHoursRecommandation()) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);

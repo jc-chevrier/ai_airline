@@ -31,6 +31,9 @@ public class Global extends Entity  {
         STRUCTURE.put("BUSINESS_CLASS_RATE", Double.class);
         STRUCTURE.put("ECONOMIC_CLASS_RATE", Double.class);
         STRUCTURE.put("PLACE_PRICE_FACTOR", Double.class);
+        STRUCTURE.put("PERCENTAGE_CANCELLATION", Double.class);
+        STRUCTURE.put("OFFSET_PLACES_RECOMMANDATION", Integer.class);
+        STRUCTURE.put("OFFSET_HOURS_RECOMMANDATION", Integer.class);
     }
 
     public Global() {
@@ -135,6 +138,30 @@ public class Global extends Entity  {
 
     public void setPlacePriceFactor(@NotNull Double placePriceFactor) {
         set("PLACE_PRICE_FACTOR", placePriceFactor);
+    }
+
+    public Double getPercentageCancellation() {
+        return (Double) get("PERCENTAGE_CANCELLATION");
+    }
+
+    public void setPercentageCancellation(@NotNull Double percentageCancellation) {
+        set("PERCENTAGE_CANCELLATION", percentageCancellation);
+    }
+
+    public Integer getOffsetPLacesRecommandation() {
+        return (Integer) get("OFFSET_PLACES_RECOMMANDATION");
+    }
+
+    public void setOffsetPlacesRecommandation(@NotNull Integer offsetPlacesRecommandation) {
+        set("OFFSET_PLACES_RECOMMANDATION", offsetPlacesRecommandation);
+    }
+
+    public Integer getOffsetHoursRecommandation() {
+        return (Integer) get("OFFSET_HOURS_RECOMMANDATION");
+    }
+
+    public void setOffsetHoursRecommandation(@NotNull Double offsetHoursRecommandation) {
+        set("OFFSET_HOURS_RECOMMANDATION", offsetHoursRecommandation);
     }
 
     /**
