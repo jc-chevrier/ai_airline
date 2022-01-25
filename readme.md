@@ -33,5 +33,5 @@ OS.
 - `prod`: branche contenant les classes java compilées, et les exécutables
   bash et batch du projet, sans les mocks des agents de l'assistant client.
 
-- `dev`: branche contenant les sources du projet: les classes java dans,
-  `src`, et les utilitaires exécutables dans `/cmd`.
+- `dev`: branche contenant les sources du projet: les classes java dans
+  `/src`, et les utilitaires exécutables dans `/cmd`.
