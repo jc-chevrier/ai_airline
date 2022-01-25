@@ -29,6 +29,7 @@ public class SearchAgent extends Agent {
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
+        var freeSeatsToRecommand = Integer.parseInt(globalConfiguration.getProperty("clear_seats_for_recommand"));
 
         //Log de debug.
         if (debugMode) {
@@ -180,7 +181,7 @@ public class SearchAgent extends Agent {
                     //Si des vols ont été trouvés.
                     if(!JSONArrayFlights.isEmpty()) {
                         //Calcul des scores de recommandation.
-                        setScore(JSONArrayFlights, startDate);
+                        setScore(JSONArrayFlights, startDate, freeSeatsToRecommand);
                         //Tri des résultats en fonction des scores de recommandation.
                         JSONArrayFlights = sortByScore(JSONArrayFlights);
                     }
@@ -224,7 +225,7 @@ public class SearchAgent extends Agent {
      * @param jsonFlights Le tableau de vols trouvés
      * @param requestedDate La date de départ demandée par l'utilisateur
      */
-    private void setScore(JSONArray jsonFlights, Date requestedDate) {
+    private void setScore(JSONArray jsonFlights, Date requestedDate, int freeSeatsToRecommand) {
         //Récupération de l'ORM pour l'interrogation
         //de la base de données.
         var orm = ORM.getInstance();
@@ -255,7 +256,7 @@ public class SearchAgent extends Agent {
 
             //Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1.
             int avalaibleSeats = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getInt("nbPlaces");
-            if (avalaibleSeats > global.getOffsetPLacesRecommandation()) {//TODO remettre en dynamique.
+            if (avalaibleSeats > freeSeatsToRecommand) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
