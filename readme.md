@@ -16,7 +16,7 @@ des assistants intelligents.
 - `Jade`
 
 ### Exécution
-Se rendre dans la branche `prod`, ou dans la branche `example`:
-<br>
-Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
+1. Se rendre dans la branche `prod`, ou dans la branche `example`.
+
+2. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS.
