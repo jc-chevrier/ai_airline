@@ -12,7 +12,7 @@ import jade.core.behaviours.TickerBehaviour;
  * Agent pour l'annulation de vols vides à venir'
  *
  */
-public class FlightCancelerAgent extends Agent {
+public class CancellerAgent extends Agent {
     @Override
     protected void setup() {
         //Récupération de l'ORM pour l'interrogation de la base de données.
@@ -32,13 +32,13 @@ public class FlightCancelerAgent extends Agent {
         }
 
         // Comportement d'écoute et de gestion des requêtes de réservation.
-        addBehaviour(new TickerBehaviour(this, 1000) {
+        addBehaviour(new TickerBehaviour(this, 10000) {
 
             @Override
             protected void onTick() {
                 //Log de debug.
                 if(debugMode) {
-                    System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
+                    System.err.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
                             "Nettoyage des vols vides à venir.");
                 }
 

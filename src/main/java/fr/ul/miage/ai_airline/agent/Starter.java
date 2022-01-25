@@ -42,7 +42,7 @@ public class Starter {
         String mockSearchAgentName = (String) configuration.get("mock_search_agent_name");
         String reservationAgentName = (String) configuration.get("reservation_agent_name");
         String searchAgentName = (String) configuration.get("search_agent_name");
-        String cancelAgentName = (String) configuration.get("canceler_agent_name");
+        String cancelAgentName = (String) configuration.get("canceller_agent_name");
 
         //Lancement des agents.
         AgentController mockReservationAgentController;
@@ -53,9 +53,9 @@ public class Starter {
         try {
             //Lancement de l'agent d'annulation de vols vides.
             cancelAgentController = containerController.createNewAgent(cancelAgentName,
-                    FlightCancelerAgent.class.getName(),
+                    CancellerAgent.class.getName(),
                     null);
-//            cancelAgentController.start();
+            cancelAgentController.start();
             //Lancement du mock de l'agent de requête de recherche de vol.
             mockSearchAgentController = containerController.createNewAgent(mockSearchAgentName,
                                                                            MockSearchRequestAgent.class.getName(),
