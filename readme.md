@@ -26,12 +26,12 @@ OS.
 
 #### Branches
 
-- `example`: branche contenant les classes java compilées, et les exécutables
-  bash et batch du projet, et contenant des mocks simulant les agents de l'assistant client 
+- `example`: branche contenant les classes `java` compilées, et les exécutables
+  `bash` et `batch` du projet, et contenant des mocks simulant les agents de l'assistant client 
   (pratique pour les tests).
 
-- `prod`: branche contenant les classes java compilées, et les exécutables
-  bash et batch du projet, sans les mocks des agents de l'assistant client.
+- `prod`: branche contenant les classes `java` compilées, et les exécutables
+  `bash` et `batch` du projet, <b>sans les mocks des agents de l'assistant client</b>.
 
-- `dev`: branche contenant les sources du projet: les classes java dans
+- `dev`: branche contenant les sources du projet: les classes `java` dans
   `/src`, et les utilitaires exécutables dans `/cmd`.
