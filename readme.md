@@ -10,6 +10,6 @@ des assistants intelligents.
 - CRINON Nicolas
 
 ### Technologies
-Java 17 
-Maven 
-Jade
+- Java 17 
+- Maven 
+- Jade
