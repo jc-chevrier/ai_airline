@@ -26,7 +26,7 @@ OS.
 
 ### Branches
 
-- `example`: branche contenant les classes java compilées, et les exécutables,
+- `example`: branche contenant les classes java compilées, et les exécutables
   bash et batch, et contient des mocks simulant les agents de l'assistant client 
   (pratique pour les tests).
 
