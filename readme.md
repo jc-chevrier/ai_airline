@@ -56,9 +56,12 @@ dépendance de `Jade` à copier dans le répertoire `jade_depenecy/` du réperto
 
 #### Configuration des paramètres fonctionnels
 
-Pour paramétrer les paramètres du fonctionnement du projet, tel que le mode debug,
+Pour paramétrer les paramètres du fonctionnement du projet, tels que le mode debug,
 il suffit de se rendre dans les fichiers de configuration. Dans la branche `dev`: 
 `src/main/resources/[...]/configuration`, dans les branches `example` et `prod`:
 `bin/[...]/configuration/`.
 
-#### Configuration des paramètres des données
+#### Configuration des donnnées globales
+
+Pour paramétrer les données globales de la compagnie, tels que le solde de la compagnie, 
+il suffit de se rendre dans la table `public.global` de la base de données `PotgreSQL` du projet.
