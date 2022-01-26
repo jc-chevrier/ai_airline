@@ -13,7 +13,7 @@ de réserver et d'acheter des places dans ces vols.
 - CHEVRIER Jean-Christophe.
 - CRINON Nicolas.
 
-#### Technologies
+#### Principales technologies, langes, librairies 
 
 - `Java 17`.
 - `Maven`.
