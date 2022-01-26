@@ -22,7 +22,7 @@ de réserver et d'acheter des places dans ces vols.
 
 #### Exécution
 
-1. Se rendre dans la branche `example`, ou dans la branche `prod`.
+1. Se rendre dans la branche `git` `example`, ou dans la branche `git` `prod`.
 
 2. Renseigner votre configuration `PostgreSQL` pour la base de données du projet dans 
    `bin/[...]/configuration/database.properties`.
