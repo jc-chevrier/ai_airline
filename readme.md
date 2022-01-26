@@ -34,7 +34,7 @@ Les exécutables créent la base de données `PostgreSQL` du projet, et la peupl
 #### Branches
 
 - `example`: branche contenant les classes `java` compilées, et les exécutables
-  `bash` et `batch` du projet, <i><b>set contenant des mocks simulant les agents de l'assistant client 
+  `bash` et `batch` du projet, <i><b>et contenant des mocks simulant les agents de l'assistant client 
   (pratique pour les tests)</b></i>.
 
 - `prod`: branche contenant les classes `java` compilées, et les exécutables
