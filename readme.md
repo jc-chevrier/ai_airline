@@ -46,11 +46,11 @@ de réserver et d'acheter des places dans ces vols.
 #### Branches `Git`
 
 - `example`: branche contenant les classes `java` compilées, et les exécutables
-  `bash` et `batch` de la solution, <i><b>et contenant des mocks simulant les agents de l'assistant client
+  `bash` et `batch` de la solution, <i><b>et contenant des mocks simulant les agents de l'assistant client / de l'agence de voyage
   (pratique pour les tests)</b></i>. Les mocks se lancent directement en parallèle des agents de la compagnie, au lancement des exécutables.
 
 - `prod`: branche contenant les classes `java` compilées, et les exécutables
-  `bash` et `batch` de la solution, <i><b>sans les mocks des agents de l'assistant client</b></i>.
+  `bash` et `batch` de la solution, <i><b>sans les mocks des agents de l'assistant client / de l'agence de voyage</b></i>.
 
 - `dev`: branche contenant les sources de la solution: les classes `java` dans
   `src/`, et les utilitaires exécutables dans `cmd/`.
@@ -91,7 +91,7 @@ Voici comment se présente l'arborescence de la solution sur la branche `dev` po
             configuration/                  Interface avec les fichiers de configuration.
             data_structure/                 Entités des données de la compagnie aérienne.
             dataset/                        Programmes du jeu de données.
-            mock_agent/                     Agents jade simulant l'assitant client.
+            mock_agent/                     Agents jade simulant l'assistant client / l'agence de voyage.
             orm/                            ORM : sucrouche sur le driver de PostreSQL.
             tool/                           Utilitaires.
             ...
@@ -105,5 +105,5 @@ Voici comment se présente l'arborescence de la solution sur la branche `dev` po
         sql/[...]/
             initialization/                 Scripts d'initialisation de la base de données.
                 database_initializer.sql    Script SQL de destruction création de la base de données.
-                tables_builder.sql          Script SQL d'isnertions des ligens dans les tables référentielles de la base de données.
+                tables_builder.sql          Script SQL d'insertions des lignss dans les tables référentielles de la base de données.
                 tables_initializer.sql      Script SQL de création des tables de la base de données.
