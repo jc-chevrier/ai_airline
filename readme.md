@@ -22,14 +22,25 @@ de réserver et d'acheter des places dans ces vols.
 
 #### Exécution
 
-1. Se rendre dans la branche `git`: `example`, ou dans la branche `git`: `prod`.
+1. Se rendre dans la branche `git` `example`, ou dans la branche `git` `prod` du projet.
 
-2. Renseigner votre configuration `PostgreSQL` pour la base de données du projet dans 
-   `bin/[...]/configuration/database.properties`.
+2. Renseigner dans votre variable d'environnement `PATH`, le chemin du répertoire `/bin`
+   de votre `Java`, et le chemin du répertoire `/bin` de votre `PostgreSQL`.
 
-3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
+3. Renseigner dans votre variable d'environnement `CLASSPATH`, le répertoire `/bin` de `Java`,
+   le chemin du fichier `lib/jade.jar` de `Jade`, et le répertoire courant `.`.
+
+4. Renseigner votre configuration `PostgreSQL` pour la base de données du projet dans
+   le fichier: `bin/[...]/configuration/database.properties`.
+
+5. Démarrer votre serveur `PostgreSQL`.
+
+6. Aller dans le répertoire `bin/[...]/cmd/` du projet, et exécuter dans ce répertoire `database_initializer.sh` ou `database_initializer.bat`
+   en fonction de votre OS. Cela va créer la base de données `PostgreSQL` du projet, vous n'avez pas besoin de la créer vous-même avant.
+
+7. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS. <br>
-   - Les exécutables créent la base de données `PostgreSQL` du projet, et la peuplent avec un jeu de données, vous n'avez pas besoin de la créer vous-même avant.<br>
+   - Les exécutables peuplent la base de données `PostgreSQL` avec un jeu de données.<br>
    - Le jeu de données est régénéré à chaque nouvelle exécution, sauf modification dans les fichiers de configuration.
 
 #### Branches `Git`
