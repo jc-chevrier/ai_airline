@@ -28,7 +28,7 @@ des assistants intelligents.
 3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS. <br><br>
 Les exécutables créent et peuplent la base de données `PostgreSQL` du projet si elle
-n'existe pas encore, vous n'avez pas besoin de la créer vous-même.
+n'existe pas encore, vous n'avez pas besoin de la créer vous-même avant.
 
 #### Branches
 
