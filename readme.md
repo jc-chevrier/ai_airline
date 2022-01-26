@@ -26,8 +26,8 @@ des assistants intelligents.
    `bin/[...]/configuration/database.properties`.
 
 3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
-OS. <br>
-Les exécutables crée la base de données `PostgreSQL` du projet, si elle
+OS. <br><br>
+Les exécutables créent la base de données `PostgreSQL` du projet si elle
 n'existe pas encore, vous n'avez pas besoin de la créer vous-même.
 
 #### Branches
