@@ -29,7 +29,6 @@ public class SearchAgent extends Agent {
         //Récupération de la configuration globale.
         var globalConfiguration = Configuration.GLOBAl_CONFIGURATION;
         var debugMode = Boolean.parseBoolean(globalConfiguration.getProperty("debug_mode"));
-        var freeSeatsToRecommand = Integer.parseInt(globalConfiguration.getProperty("clear_seats_for_recommand"));
 
         //Log de debug.
         if (debugMode) {
@@ -181,7 +180,7 @@ public class SearchAgent extends Agent {
                     //Si des vols ont été trouvés.
                     if(!JSONArrayFlights.isEmpty()) {
                         //Calcul des scores de recommandation.
-                        setScore(JSONArrayFlights, startDate, freeSeatsToRecommand);
+                        setScore(JSONArrayFlights, startDate, seatsRequested);
                         //Tri des résultats en fonction des scores de recommandation.
                         JSONArrayFlights = sortByScore(JSONArrayFlights);
                     }
@@ -220,12 +219,13 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * Affectation de score de recommendation selon plusieurs critères
+     * Affecter un score de recommendation selon plusieurs critères.
      *
-     * @param jsonFlights Le tableau de vols trouvés
-     * @param requestedDate La date de départ demandée par l'utilisateur
+     * @param jsonFlights
+     * @param requestedDate
+     * @param countPlacesAsked
      */
-    private void setScore(JSONArray jsonFlights, Date requestedDate, int freeSeatsToRecommand) {
+    private void setScore(JSONArray jsonFlights, Date requestedDate, Integer countPlacesAsked) {
         //Récupération de l'ORM pour l'interrogation
         //de la base de données.
         var orm = ORM.getInstance();
@@ -256,7 +256,7 @@ public class SearchAgent extends Agent {
 
             //Si l'avion a encore plus de 10 places disponibles dans la classe demandée alors on lui ajoute 1.
             int avalaibleSeats = ((JSONObject) jsonFlight).getJSONArray("classes").getJSONObject(0).getInt("nbPlaces");
-            if (avalaibleSeats > freeSeatsToRecommand) {
+            if (avalaibleSeats >= (countPlacesAsked + global.getOffsetPLacesRecommandation())) {
                 int currentRecommandationScore = ((JSONObject) jsonFlight).getInt("recommandationScore");
                 currentRecommandationScore++;
                 ((JSONObject) jsonFlight).put("recommandationScore", currentRecommandationScore);
@@ -275,10 +275,10 @@ public class SearchAgent extends Agent {
     }
 
     /**
-     * Tri des vols retournés par score de recommendation décroissant
+     * Trier des vols retournés par score de recommendation décroissant.
      *
-     * @param jsonFlights Le tableau de vols trouvés
-     * @return Le tableau trié par score de recommandation
+     * @param jsonFlights
+     * @return
      */
     private JSONArray sortByScore(JSONArray jsonFlights) {
         //On trie dans l'ordre décroissant via le champ "recommandationScore".

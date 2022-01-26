@@ -37,8 +37,8 @@ public class CancellationAgent extends Agent {
             protected void onTick() {
                 //Log de debug.
                 if(debugMode) {
-                    System.err.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
-                                       "Nettoyage des vols vides à venir.");
+                    System.out.println("[Compagnie aérienne][Agent = " + getLocalName() + "] " +
+                                        "Nettoyage des vols vides à venir.");
                 }
 
                 //Trouver les vols vides des 2 prochains jours.
