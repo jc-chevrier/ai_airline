@@ -67,7 +67,7 @@ public class CancellationAgent extends Agent {
                             //Log de debug.
                             if(debugMode) {
                                 System.out.println("Suppression pour le vol "+ flight.getId() + " de sa classe (id) " +
-                                                     flightClass.getPlaneTypeClassId());
+                                                     flightClass.getPlaneTypeClassId() +  ".");
                             }
                             //Suppression.
                             orm.removeOne(flightClass);
@@ -75,7 +75,7 @@ public class CancellationAgent extends Agent {
                         //Enfin, on supprime le vol.
                         //Log de debug.
                         if(debugMode) {
-                            System.out.println("Suppression pour du vol "+ flight.getId());
+                            System.out.println("Suppression pour du vol: "+ flight.getId() + ".");
                         }
                         //Suppression.
                         orm.removeOne(flight);

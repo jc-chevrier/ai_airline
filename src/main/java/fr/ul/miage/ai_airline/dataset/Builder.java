@@ -35,6 +35,8 @@ public class Builder {
             System.out.println("[Compagnie aérienne][Jeu de données] Nettoyage des vols et avions.");
         }
         //Nettoyage.
+        global.setBalance(11000000.0);
+        orm.save(global);
         orm.reset(FlightClass.class);
         orm.reset(Flight.class);
         orm.reset(Plane.class);

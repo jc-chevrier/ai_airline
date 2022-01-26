@@ -46,16 +46,11 @@ public class Starter {
 
         //Lancement des agents.
         AgentController mockReservationAgentController;
-        AgentController mockSearchAgentController;
         AgentController reservationAgentController;
+        AgentController mockSearchAgentController;
         AgentController searchAgentController;
         AgentController cancellationAgentController;
         try {
-            //Lancement de l'agent d'annulation de vols vides.
-            cancellationAgentController = containerController.createNewAgent(cancellationAgentName,
-                                                                             CancellationAgent.class.getName(),
-                                                                             null);
-            cancellationAgentController.start();
             //Lancement du mock de l'agent de requête de recherche de vol.
             mockSearchAgentController = containerController.createNewAgent(mockSearchAgentName,
                                                                            MockSearchRequestAgent.class.getName(),
@@ -76,6 +71,11 @@ public class Starter {
                                                                             ReservationAgent.class.getName(),
                                                                             null);
             reservationAgentController.start();
+            //Lancement de l'agent d'annulation de vols vides.
+            cancellationAgentController = containerController.createNewAgent(cancellationAgentName,
+                                                                             CancellationAgent.class.getName(),
+                                                                             null);
+            cancellationAgentController.start();
         } catch (StaleProxyException e) {
             System.err.println("Erreur! Problème au cours du démarrage des agents!");
             e.printStackTrace();
