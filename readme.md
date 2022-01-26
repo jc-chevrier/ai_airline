@@ -47,20 +47,20 @@ Les exécutables créent la base de données `PostgreSQL` du projet, et la peupl
 #### Problème de résolution de dépendence
 
 La dépendance de `Jade` déclarée dans le `pom.xml` n'est plus résolut par 
-maven, si vous souhaitez utiliser la branche `dev`, vous devez renseigner la 
+`Maven`. Si vous souhaitez utiliser la branche `dev`, vous devez renseigner la 
 dépendance vous-même dans le répertoire de votre pc `[...]/.m2/com/` qui est
-le répertoire des dépendances centralisées sur votre pc. Vous pouvez trouver
-dépendance de `Jade` à copier dans le répertoire `jade_dependency/` du répertoire 
+le répertoire des dépendances centralisées sur votre pc. Vous pouvez trouver la
+dépendance de `Jade` en question dans le répertoire `jade_dependency/` du répertoire 
 `git`.
 
 #### Configuration des paramètres techniques
 
 Pour paramétrer les paramètres techniques du projet, tels que le `mode debug`,
 il suffit de se rendre dans les fichiers de configuration. Dans la branche `dev`: 
-`src/main/resources/[...]/configuration`, dans les branches `example` et `prod`:
+`src/main/resources/[...]/configuration/`, dans les branches `example` et `prod`:
 `bin/[...]/configuration/`.
 
 #### Configuration des données globales
 
-Pour paramétrer les données globales de la compagnie, tels que le solde de la compagnie, 
-il suffit de se rendre dans la table `public.global` de la base de données `PotgreSQL` du projet.
+Pour paramétrer les données globales de la compagnie, telles que le solde de la compagnie, 
+il suffit de se rendre dans la table `public.global` de la base de données `PostgreSQL` du projet.
