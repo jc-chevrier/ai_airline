@@ -22,7 +22,7 @@ des assistants intelligents.
 
 1. Se rendre dans la branche `example`, ou dans la branche `prod`.
 
-2. Renseigner la configuration de la base de données `PostgreSQL` du projet dans 
+2. Renseigner votre configuration `PostgreSQL` pour la base de données du projet dans 
    `bin/[...]/configuration/database.properties`.
 
 3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
