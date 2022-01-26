@@ -1,9 +1,9 @@
 @ECHO OFF
 
-SET resourcesFolder=..\
+SET resourcesFolder=..\bin\fr\ul\miage\ai_airline
 SET configurationFile=%resourcesFolder%\configuration\database.properties
 
-SET SQLFolder=..\
+SET SQLFolder=..\bin\fr\ul\miage\ai_airline
 SET databaseInitializerScript=%SQLFolder%\initialization\database_initializer.sql
 SET tablesInitializerScript=%SQLFolder%\initialization\tables_initializer.sql
 SET tablesBuilderScript=%SQLFolder%\initialization\tables_builder.sql
