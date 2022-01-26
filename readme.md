@@ -1,12 +1,11 @@
 ## Solution
-Projet AI Airline
+Projet `AI Airline`.
 
 #### Description 
 Projet simulant une compagnie aérienne avec des assistants intelligents. 
 <br>
-<br>
-Une compagnie aérienne est définie ici comme une entité proposant des vols, et permettant de
-de réserver et acheter des places dans ses vols.
+Une compagnie aérienne est définie ici comme une entité proposant des vols, et permettant
+de réserver et d'acheter des places dans ces vols.
 
 #### Equipe
 
@@ -51,17 +50,17 @@ La dépendance de `Jade` déclarée dans le `pom.xml` n'est plus résolut par
 maven, si vous souhaitez utiliser la branche `dev`, vous devez renseigner la 
 dépendance vous-même dans le répertoire de votre pc `[...]/.m2/com/` qui est
 le répertoire des dépendances centralisées sur votre pc. Vous pouvez trouver
-dépendance de `Jade` à copier dans le répertoire `jade_depenecy/` du répertoire 
+dépendance de `Jade` à copier dans le répertoire `jade_dependency/` du répertoire 
 `git`.
 
-#### Configuration des paramètres fonctionnels
+#### Configuration des paramètres techniques
 
-Pour paramétrer les paramètres du fonctionnement du projet, tels que le mode debug,
+Pour paramétrer les paramètres techniques du projet, tels que le `mode debug`,
 il suffit de se rendre dans les fichiers de configuration. Dans la branche `dev`: 
 `src/main/resources/[...]/configuration`, dans les branches `example` et `prod`:
 `bin/[...]/configuration/`.
 
-#### Configuration des donnnées globales
+#### Configuration des données globales
 
 Pour paramétrer les données globales de la compagnie, tels que le solde de la compagnie, 
 il suffit de se rendre dans la table `public.global` de la base de données `PotgreSQL` du projet.
