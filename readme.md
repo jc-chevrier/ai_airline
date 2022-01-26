@@ -2,8 +2,7 @@
 Projet AI Airline
 
 #### Description 
-Projet simulant une compagnie aérienne avec
-des assistants intelligents. 
+Projet simulant une compagnie aérienne avec des assistants intelligents. 
 <br>
 <br>
 Une compagnie aérienne est définie ici comme une entité proposant des vols, et permettant de
@@ -54,3 +53,12 @@ dépendance vous-même dans le répertoire de votre pc `[...]/.m2/com/` qui est
 le répertoire des dépendances centralisées sur votre pc. Vous pouvez trouver
 dépendance de `Jade` à copier dans le répertoire `jade_depenecy/` du répertoire 
 `git`.
+
+#### Configuration des paramètres fonctionnels
+
+Pour paramétrer les paramètres du fonctionnement du projet, tel que le mode debug,
+il suffit de se rendre dans les fichiers de configuration. Dans la branche `dev`: 
+`src/main/resources/[...]/configuration`, dans les branches `example` et `prod`:
+`bin/[...]/configuration/`.
+
+#### Configuration des paramètres des données
