@@ -16,13 +16,20 @@ des assistants intelligents.
 - `Java 17` 
 - `Maven` 
 - `Jade`
+- `PostgreSQL`
 
 #### Exécution
 
 1. Se rendre dans la branche `example`, ou dans la branche `prod`.
 
-2. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
+2. Renseigner la configuration de la base de données `PostgreSQL` du projet dans 
+   `bin/[...]/configuration/database.properties`.
+
+3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS.
+<br>
+Les exécutables crée la base de données `PostgreSQl` du projet, si elle
+n'existe pas encore, vous n'avez pas besoin de la créer vous-même.
 
 #### Branches
 
@@ -36,6 +43,7 @@ OS.
 - `dev`: branche contenant les sources du projet: les classes `java` dans
   `src/`, et les utilitaires exécutables dans `cmd/`.
 
+  
 #### Problème de résolution de dépendence
 
 La dépendance de `Jade` déclarée dans le `pom.xml` n'est plus résolut par 
