@@ -31,7 +31,7 @@ de réserver et d'acheter des places dans ces vols.
 OS. <br>
 Les exécutables créent la base de données `PostgreSQL` du projet, et la peuplent avec un jeu de données, vous n'avez pas besoin de la créer vous-même avant.
 
-#### Branches
+#### Branches `Git`
 
 - `example`: branche contenant les classes `java` compilées, et les exécutables
   `bash` et `batch` du projet, <i><b>et contenant des mocks simulant les agents de l'assistant client 
