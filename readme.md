@@ -24,18 +24,18 @@ de réserver et d'acheter des places dans ces vols.
 
 1. Se rendre dans la branche `git` `example`, ou dans la branche `git` `prod` du projet.
 
-2. Renseigner dans votre variable d'environnement `PATH`, le chemin du répertoire `/bin`
-   de votre `Java`, et le chemin du répertoire `/bin` de votre `PostgreSQL`.
+2. Renseigner dans votre variable d'environnement `PATH`, le chemin du répertoire `bin/`
+   de votre `Java`, et le chemin du répertoire `bin/` de votre `PostgreSQL`.
 
-3. Renseigner dans votre variable d'environnement `CLASSPATH`, le répertoire `/bin` de `Java`,
+3. Renseigner dans votre variable d'environnement `CLASSPATH`, le répertoire `bin/` de `Java`,
    le chemin du fichier `lib/jade.jar` de `Jade`, et le répertoire courant `.`.
 
 4. Renseigner votre configuration `PostgreSQL` pour la base de données du projet dans
-   le fichier: `bin/[...]/configuration/database.properties`.
+   le fichier: `bin/fr/[...]/configuration/database.properties`.
 
 5. Démarrer votre serveur `PostgreSQL`.
 
-6. Aller dans le répertoire `bin/[...]/cmd/` du projet, et exécuter dans ce répertoire `database_initializer.sh` ou `database_initializer.bat`
+6. Aller dans le répertoire `bin/fr/[...]/cmd/` du projet, et exécuter dans ce répertoire `database_initializer.sh` ou `database_initializer.bat`
    en fonction de votre OS. Cela va créer la base de données `PostgreSQL` du projet, vous n'avez pas besoin de la créer vous-même avant.
 
 7. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
@@ -70,7 +70,7 @@ dépendance de `Jade` en question dans le répertoire `jade_dependency/` du rép
 Pour paramétrer les paramètres techniques du projet, tels que le `mode debug`,
 il suffit de se rendre dans les fichiers de configuration. Dans la branche `dev`:
 `src/main/resources/[...]/configuration/`, dans les branches `example` et `prod`:
-`bin/[...]/configuration/`.
+`bin/fr/[...]/configuration/`.
 
 #### Configuration des données globales
 
