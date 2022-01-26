@@ -3,7 +3,9 @@ Projet AI Airline
 
 #### Description 
 Projet simulant une compagnie aérienne avec
-des assistants intelligents.
+des assistants intelligents. La compagnie aérienne est 
+définie ici comme une entité proposant des vols, et permettant de
+d'y réserver et acheter des places.
 
 #### Equipe
 
