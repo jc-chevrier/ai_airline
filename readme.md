@@ -20,7 +20,7 @@ de réserver et d'acheter des places dans ces vols.
 - `Jade`.
 - `PostgreSQL`.
 
-#### Exécution
+#### Installation et exécution
 
 1. Se rendre dans la branche `git` `example`, ou dans la branche `git` `prod` du projet.
 
