@@ -9,16 +9,16 @@ de réserver et d'acheter des places dans ces vols.
 
 #### Equipe
 
-- BONCI Jérémy
-- CHEVRIER Jean-Christophe
-- CRINON Nicolas
+- BONCI Jérémy.
+- CHEVRIER Jean-Christophe.
+- CRINON Nicolas.
 
 #### Technologies
 
-- `Java 17` 
-- `Maven` 
-- `Jade`
-- `PostgreSQL`
+- `Java 17`.
+- `Maven`.
+- `Jade`.
+- `PostgreSQL`.
 
 #### Exécution
 
