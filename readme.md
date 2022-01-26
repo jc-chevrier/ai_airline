@@ -29,7 +29,8 @@ de réserver et d'acheter des places dans ces vols.
 
 3. Exécuter `ai_airline.sh` ou `ai_airline.bat` en fonction de votre
 OS. <br>
-Les exécutables créent la base de données `PostgreSQL` du projet, et la peuplent avec un jeu de données, vous n'avez pas besoin de la créer vous-même avant.
+   - Les exécutables créent la base de données `PostgreSQL` du projet, et la peuplent avec un jeu de données, vous n'avez pas besoin de la créer vous-même avant.<br>
+   - Le jeu de données est régénéré à chaque nouvelle exécution, sauf modification dans les fichiers de configuration.
 
 #### Branches `Git`
 
