@@ -13,7 +13,7 @@ de réserver et d'acheter des places dans ces vols.
 - CHEVRIER Jean-Christophe.
 - CRINON Nicolas.
 
-#### Principales technologies, langages, librairies 
+#### Langages, librairies 
 
 - `Java 17`.
 - `Maven`.
